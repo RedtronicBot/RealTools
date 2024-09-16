@@ -350,7 +350,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 					):
 					(
 						<div className='map_chargement'>
-							<h2>Chargement</h2>
+							<h2>Loading</h2>
 							<div className='map_chargement_spinner'></div>
 							{data.length === 0 ?(<h3>0 %</h3>):(<h3>{parseInt((load/data.length)*100)} %</h3>)}
 						</div>
