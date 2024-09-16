@@ -38,6 +38,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 	const searchBarRef = useRef(null)
 	const [activeMarkerId, setActiveMarkerId] = useState(null)
 	const mapRef = useRef(null)
+	const YieldRangeRef = useRef(null)
 	const handleIndex = (index) =>{
 		setIndexLocation(index)
 	}
@@ -131,10 +132,10 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 		}
 		return L.divIcon({
 			className: ``,
-			iconSize: [25, 41],
+			iconSize: [24, 24],
 			iconAnchor: [12, 41],
 			popupAnchor: [1, -34],
-			html: `<img src="${markerIcon}" height="24px" class="${activeMarkerId !== null && location.coordinate.lat === activeMarkerId.lat && location.coordinate.lng === activeMarkerId.lng ? "map_marker" : ""}" />`, 
+			html: `<img src="${markerIcon}" height="24px" width="24px" class="${activeMarkerId !== null && location.coordinate.lat === activeMarkerId.lat && location.coordinate.lng === activeMarkerId.lng ? "map_marker" : ""}" />`, 
 		})
 	}
 	
@@ -212,6 +213,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 			setRentStarted(true)
 			setRentedUnits('')
 			setYieldRent(null)
+			YieldRangeRef.current.value = 0
 		}
 		else
 		{
@@ -223,6 +225,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 		setRentStarted(null)
 		setRentedUnits(value)
 		setYieldRent(null)
+		YieldRangeRef.current.value = 0
 	}
 	const onSetYieldRent = (value) =>
 	{
@@ -235,6 +238,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 		setRentStarted(null)
 		setRentedUnits('')
 		setYieldRent(null)
+		YieldRangeRef.current.value = 0
 	}
 	/*Gestion fermeture de l'autre menu dans la partie Wallet/Filter */
 	const onSetWallet = () =>
@@ -276,18 +280,16 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 		setFilteredAdresses(filteredSlice)
 	}
 	/*Fonction zoom vers le marqueur de l'adresse */
-	const zoomToCoordinate = (lat,lng) => {
+	const zoomToCoordinate = (name,lat,lng) => {
 		const latAdress = parseFloat(lat)
 		const lngAdress = parseFloat(lng)
 		const map = mapRef.current
 		if (map) 
 		{
 			map.setView([latAdress, lngAdress], 20)
-			map.on('moveend', () => {
-				map.invalidateSize()
-			})
 			const dataRealTZoom = dataRealT.filter((field)=>field.coordinate.lat === lat && field.coordinate.lng === lng)
 			handleMarkerClick(dataRealTZoom[0])
+			searchBarRef.current.value = name
 			setFilteredAdresses([])
 		}
 	}
@@ -368,7 +370,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 				</div>
 				{filteredAdresses.length > 0 &&
 					<div className='map_search_suggestion'>
-						{filteredAdresses.map((address,index)=>(<p className='map_search_text' onClick={()=>zoomToCoordinate(address.lat,address.lng)} key={index}>{address.name}</p>))}
+						{filteredAdresses.map((address,index)=>(<p className='map_search_text' onClick={()=>zoomToCoordinate(address.name,address.lat,address.lng)} key={index}>{address.name}</p>))}
 					</div>
 				}
 			</div>}
@@ -417,7 +419,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 									</>
 								)}
 								</div>
-								<input type="range" id="volume" name="volume" min="-150" max="150" step="5" defaultValue="0" onChange={(e)=>onSetYieldRent(((e.target.value)/10))} />
+								<input type="range" min="-150" max="150" step="5" defaultValue="0" onChange={(e)=>onSetYieldRent(((e.target.value)/10))} ref={YieldRangeRef} />
 							</div>
 						</div>
 						<p className='map_filter_components_title'>Rent Date</p>
