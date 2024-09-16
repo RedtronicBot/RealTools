@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/RealTools/static/css/main.b434bc60.css",
+    "main.js": "/RealTools/static/js/main.d78bb83f.js",
+    "static/media/portfolio.png": "/RealTools/static/media/portfolio.2a8bd98da672e58a6e28.png",
+    "static/media/quadplex.png": "/RealTools/static/media/quadplex.4fdc211754120020e6a6.png",
+    "static/media/gear-solid.svg": "/RealTools/static/media/gear-solid.0d170579c1e397e19e20dcee9db5daec.svg",
+    "static/media/people-roof-solid.svg": "/RealTools/static/media/people-roof-solid.7f44eef2c37a34c074fd2fc4cfb1b0b1.svg",
+    "static/media/building-solid.svg": "/RealTools/static/media/building-solid.a401d17e6e219daf075b6ec11c3f2c51.svg",
+    "static/media/arrows-rotate-solid.svg": "/RealTools/static/media/arrows-rotate-solid.33f750b027732a2b50e76ccd5b185986.svg",
+    "static/media/store-solid.svg": "/RealTools/static/media/store-solid.cff94bdbdb30003a884f3fc5c3948cf6.svg",
+    "static/media/house-solid.svg": "/RealTools/static/media/house-solid.9ae583ec1fd9ce36b21898d6827170a6.svg",
+    "index.html": "/RealTools/index.html",
+    "static/media/house-user-solid.svg": "/RealTools/static/media/house-user-solid.eca03e83b236110a5523d23d6a94a815.svg",
+    "static/media/x-solid.svg": "/RealTools/static/media/x-solid.6b4cdfe4e04dac9cee7c9eff46b87830.svg",
+    "static/media/magnifying-glass-solid.svg": "/RealTools/static/media/magnifying-glass-solid.2ec9095c91defdc2d836eb9e39749034.svg",
+    "static/media/filter-solid.svg": "/RealTools/static/media/filter-solid.2a94cd134364999afd5f1507b731f054.svg",
+    "static/media/chevron.svg": "/RealTools/static/media/chevron.0cc2834c5b72ead6355dcf336cea13c4.svg",
+    "main.b434bc60.css.map": "/RealTools/static/css/main.b434bc60.css.map",
+    "main.d78bb83f.js.map": "/RealTools/static/js/main.d78bb83f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b434bc60.css",
+    "static/js/main.d78bb83f.js"
+  ]
+}
