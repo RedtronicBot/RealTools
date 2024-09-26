@@ -22,7 +22,7 @@ import portfolio from '../images/marker/portfolio.png'
 import building from '../images/marker/building-solid.svg'
 import quadplex from '../images/marker/quadplex.png'
 import commercial from '../images/marker/store-solid.svg'
-function Map({data,dataRealT,load,apiKey,setKey}) {
+function Map({data,dataRealT,apiKey,setKey}) {
 	const [selectedLocation, setSelectedLocation] = useState(null)
 	const [indexLocation,setIndexLocation] = useState(0)
 	const [open,setOpen] = useState(false)
@@ -52,7 +52,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 		})
 	}
 	useEffect(()=>{
-		let dataRealTFilter = dataRealT
+		let dataRealTFilter = dataRealT.filter((field)=>field.fullName !== 'RWA Holdings SA, Neuchatel, NE, Suisse')
 		if (rentedUnits === 'Full') {
 		  	dataRealTFilter = dataRealT.filter((field) => field.rentedUnits === field.totalUnits)
 		}
@@ -80,22 +80,30 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 		{
 			dataRealTFilter = dataRealT.filter((field) => 
 			{
-				const now = Date.now()
-				const date = field.rentStartDate.date
-				const newDate = date.replace(' ', 'T')
-				const rentDate = new Date(newDate)
-				return now > rentDate.getTime()
+				if(field.rentStartDate !== null)
+				{
+					const now = Date.now()
+					const date = field.rentStartDate.date
+					const newDate = date.replace(' ', 'T')
+					const rentDate = new Date(newDate)
+					return now > rentDate.getTime()
+				}
+				return false
 			})
 		}
 		else if(!rentStarted && rentStarted !== null)
 		{
 			dataRealTFilter = dataRealT.filter((field) => 
 			{
-				const now = Date.now()
-				const date = field.rentStartDate.date
-				const newDate = date.replace(' ', 'T')
-				const rentDate = new Date(newDate)
-				return now < rentDate.getTime()
+				if(field.rentStartDate !== null)
+				{
+					const now = Date.now()
+					const date = field.rentStartDate.date
+					const newDate = date.replace(' ', 'T')
+					const rentDate = new Date(newDate)
+					return now < rentDate.getTime()
+				}
+				return false
 			})	
 		}
 		setHouseNumber(dataRealTFilter)
@@ -326,7 +334,7 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 				)
 				:
 				(
-					dataRealT.length > 0 ? 
+					dataRealT.length > 0 && 
 					(
 						<MapContainer center={[18.808779, -52.150144]} zoom={3} className='map' zoomControl={false} ref={mapRef}>
 							<TileLayer
@@ -347,13 +355,6 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 								))}
 							</MarkerClusterGroup>
 						</MapContainer>
-					):
-					(
-						<div className='map_chargement'>
-							<h2>Loading</h2>
-							<div className='map_chargement_spinner'></div>
-							{data.length === 0 ?(<h3>0 %</h3>):(<h3>{parseInt((load/data.length)*100)} %</h3>)}
-						</div>
 					)
 				)
 			}
@@ -387,28 +388,28 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 					<div className={`map_settings_bloc_key ${walletMenu ? "open":""}`}>
 						<div className='map_settings_key'>
 							<input type='text' onChange={(e)=>onSetKey(e.target.value)} />
-							<span>Wallet</span>
+							<span>Portefeuille</span>
 						</div>
 					</div>
 				</div>
 				<div className={`map_filter ${filter ? "open":""}`}>
 					<div className='map_filter_components'>
-						<p className='map_filter_components_title'>Rented Unit</p>
+						<p className='map_filter_components_title'>Logement loués</p>
 						<div className='map_filter_components_radio'>
 							<div onClick={()=>onSetRentedUnits('Full')} className={`map_filter_components_radio_content`}>
-								<p>Full</p>
+								<p>Plein</p>
 								<div className={`map_filter_components_radio_button ${rentedUnits === 'Full' ? "checked":""}`}></div>
 							</div>
 							<div onClick={()=>onSetRentedUnits('Partial')} className={`map_filter_components_radio_content`}>
-								<p>Partial</p>
+								<p>Partiel</p>
 								<div className={`map_filter_components_radio_button ${rentedUnits === 'Partial' ? "checked":""}`}></div>
 							</div>
 							<div onClick={()=>onSetRentedUnits('Empty')} className={`map_filter_components_radio_content`}>
-								<p>Empty</p>
+								<p>Vide</p>
 								<div className={`map_filter_components_radio_button ${rentedUnits === 'Empty' ? "checked":""}`}></div>
 							</div>
 						</div>
-						<p className='map_filter_components_title'>Yield</p>
+						<p className='map_filter_components_title'>Rendement</p>
 						<div>
 							<div className='map_filter_components_radio_content'>
 								<div className='map_filter_components_radio_content_row'>
@@ -422,99 +423,100 @@ function Map({data,dataRealT,load,apiKey,setKey}) {
 								<input type="range" min="-150" max="150" step="5" defaultValue="0" onChange={(e)=>onSetYieldRent(((e.target.value)/10))} ref={YieldRangeRef} />
 							</div>
 						</div>
-						<p className='map_filter_components_title'>Rent Date</p>
+						<p className='map_filter_components_title'>Mise en location</p>
 						<div className='map_filter_components_radio'>
 							{rentStarted === null ?
 								(
 									<div onClick={()=>onSetRentStarted()} className='map_filter_components_radio_content_row'>
-										<p>Started</p>
+										<p>Entamé</p>
 										<div className='map_filter_components_radio_checkbox'><div className={`map_filter_components_radio_checkbox_button`}></div></div>
-										<p>Not Started</p>
+										<p>Non entamé</p>
 									</div>
 								):
 								(rentStarted === true ? 
 									(
 										<div onClick={()=>onSetRentStarted()} className='map_filter_components_radio_content_row'>
-											<p>Started</p>
+											<p>Entamé</p>
 											<div className='map_filter_components_radio_checkbox'><div className={`map_filter_components_radio_checkbox_button checked`}></div></div>
-											<p>Not Started</p>
+											<p>Non entamé</p>
 										</div>
 									):
 									(
 										<div onClick={()=>onSetRentStarted()} className='map_filter_components_radio_content_row'>
-											<p>Started</p>
+											<p>Entamé</p>
 											<div className='map_filter_components_radio_checkbox'><div className={`map_filter_components_radio_checkbox_button unchecked`}></div></div>
-											<p>Not Started</p>
+											<p>Non entamé</p>
 										</div>
 									)
 								)
 							}
 						</div>
-						<img src={refresh} alt='refresh' height={24}  onClick={()=>setReload()}/>
+						<p className='map_filter_components_title'>Type de propriété</p>
+						<img src={refresh} alt='refresh' height={24} onClick={()=>setReload()}/>
 					</div>
 				</div>
 				<div className='map_marker_details_bloc' ref={markerDetailsRef}>
 				{selectedLocation && (
 					<div className='map_marker_details_components'>
-						<div className='map_carousel_close' onClick={()=>setOpen(!open)}><img src={cross} alt='chevron' height={14} /></div>
+						<div className='map_carousel_close' onClick={()=>ResetSearch()}><img src={cross} alt='chevron' height={14} /></div>
 						<Carousel img={selectedLocation[indexLocation].image} name={selectedLocation[indexLocation].name} selectedLocation={selectedLocation} onIndexLocation={handleIndex} />
 						<h3 className='map_marker_details_components_name'>{selectedLocation[indexLocation].name}</h3>
 						<div className='map_marker_details_components_boutons'>
 							<a href={selectedLocation[indexLocation].marketplaceLink} className='bouton_marker_details' target="_blank" rel="noreferrer">RealT</a>
 							<a href={`https://dashboard.realt.community/asset/${selectedLocation[indexLocation].contract}`} className='bouton_marker_details' target="_blank" rel="noreferrer">Dashboard</a>
 						</div>
-						<p className='map_marker_details_components_title'>Rent</p>
+						<p className='map_marker_details_components_title'>Loyer</p>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Rented Unit</p>
+							<p className='map_marker_details_components_field_title'>Logement loués</p>
 							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].rentedUnits}/{selectedLocation[indexLocation].totalUnits} ({formatNumber(((selectedLocation[indexLocation].rentedUnits/selectedLocation[indexLocation].totalUnits)*100),2)} %)</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Yield</p>
+							<p className='map_marker_details_components_field_title'>Rendement</p>
 							<p className='map_marker_details_components_field_text'>{formatNumber(selectedLocation[indexLocation].annualPercentageYield,2)} %</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Week Rent</p>
+							<p className='map_marker_details_components_field_title'>Loyer hebdomadaire</p>
 							<p className='map_marker_details_components_field_text'>{formatNumber((selectedLocation[indexLocation].netRentWeekPerToken*selectedLocation[indexLocation].ownedToken),2)} $</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Year Rent</p>
+							<p className='map_marker_details_components_field_title'>Loyer annuel</p>
 							<p className='map_marker_details_components_field_text'>{formatNumber((selectedLocation[indexLocation].netRentYearPerToken*selectedLocation[indexLocation].ownedToken),2)} $</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Rent Start</p>
+							<p className='map_marker_details_components_field_title'>Mise en location</p>
 							<p className='map_marker_details_components_field_text'>{(selectedLocation[indexLocation].rentStartDate.getDate()).toString().padStart(2,"0")}/{(selectedLocation[indexLocation].rentStartDate.getMonth()+1).toString().padStart(2,"0")}/{selectedLocation[indexLocation].rentStartDate.getFullYear()}</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Rent Type</p>
+							<p className='map_marker_details_components_field_title'>Type de location</p>
 							<p className='map_marker_details_components_field_text'>{formatString(selectedLocation[indexLocation].rentalType)}</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Total Investment</p>
-							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].totalInvestment}</p>
+							<p className='map_marker_details_components_field_title'>Investissement total</p>
+							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].totalInvestment} $</p>
 						</div>
 						<div className='map_marker_details_components_field'>
 							<p className='map_marker_details_components_field_title'>Token</p>
 							<p className='map_marker_details_components_field_text'>{formatNumber(selectedLocation[indexLocation].ownedToken,2)}/{selectedLocation[indexLocation].totalToken} </p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Price</p>
+							<p className='map_marker_details_components_field_title'>Prix</p>
 							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].price} $</p>
 						</div>
-						<p className='map_marker_details_components_title'>Details</p>
+						<p className='map_marker_details_components_title'>Détails</p>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Property Type</p>
+							<p className='map_marker_details_components_field_title'>Type de propriété</p>
 							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].propertyTypeName}</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Bed/Bath</p>
+							<p className='map_marker_details_components_field_title'>Lit/Salle de bain</p>
 							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].bedroomBath}</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Construction Year</p>
+							<p className='map_marker_details_components_field_title'>Année de construction</p>
 							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].constructionYear}</p>
 						</div>
 						<div className='map_marker_details_components_field'>
-							<p className='map_marker_details_components_field_title'>Square Feet</p>
+							<p className='map_marker_details_components_field_title'>Superficie cadastrale</p>
 							<p className='map_marker_details_components_field_text'>{selectedLocation[indexLocation].squareFeet} ft²</p>
 						</div>
 						{selectedLocation[indexLocation].section8paid !== 0 &&<div className='map_marker_details_components_field'>
