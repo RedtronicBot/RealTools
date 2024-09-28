@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import PieChart from '../components/Pie'
+import info from '../images/icons/info-solid.svg'
 function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
     const [rentStat,setRentStat] = useState(null)
     const [propertiesStat,setPropertiesStat] = useState(null)
@@ -8,7 +10,11 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
     const [rondayStat,setRondayStat] = useState(null)
     const [rondayProperties,setRondayProperties] =useState('week')
     const [yieldStat,setYieldStat] = useState(null)
+    const [propertiesType,setPropertiesType] = useState([])
+    const [propertiesDiversity,setPropertiesDiversity] = useState([])
+    const [dataLength,setDataLength] = useState(0)
     useEffect(()=>{
+        /*Récupération/filtrage des données pour chaque bloc*/
         const RentObj =
         {
             rentYearly:0,
@@ -24,7 +30,7 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
             yieldActual:0
         }
         dataRealT.filter((field)=>field.rentStartDate !== null).forEach(loc => {
-            /*Filtrage des location qui rapporte des rent*/
+            /*Filtrage des location qui rapporte des loyers*/
             if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction') || loc.productType === "loan_income")
             {
                 let rentYear = parseFloat((loc.netRentYearPerToken).toFixed(2)*(data.filter((field) => field.token === loc.gnosisContract.toLowerCase()))[0]?.value)
@@ -204,7 +210,7 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
         getRonday('fourth',dateArray[3])
         getRonday('fifth',dateArray[4])
         setRondayStat(RondayObj)
-
+        /*Filtrage des logment ou la location à démarée*/
         const FilteredData = dataRealT.filter((field) => {
             if (field.rentStartDate !== null) {
                 const dateFrist = new Date()
@@ -218,10 +224,47 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
         FilteredData.forEach(loc => {
             YieldObj.yieldActual += loc.annualPercentageYield
         })
-        console.log(YieldObj.yieldActual)
         YieldObj.yieldActual = YieldObj.yieldActual/FilteredData.length
         setYieldStat(YieldObj)
     },[dataRealT,data,valueRmm,rondayProperties])
+    useEffect(()=>{
+        /*Filtrage des donées pour les graphiques*/
+        let arrayPropertiesType = []
+        let arrayPropertiesDiversity = []
+        dataRealT.filter(field=>field.rentStartDate !== null).forEach(loc =>{
+            const indexPropertiesType = arrayPropertiesType.findIndex(field=>field.type === loc.propertyTypeName)
+            if(indexPropertiesType === -1)
+            {
+                const dataPropertiesType =
+                {
+                    type:loc.propertyTypeName,
+                    quantity:1
+                }
+                arrayPropertiesType.push(dataPropertiesType)   
+            }
+            else
+            {
+                arrayPropertiesType[indexPropertiesType].quantity += 1    
+            }
+            const indexPropertiesDiversity = arrayPropertiesDiversity.findIndex(field=>field.type === loc.fullName.split(', ')[1]) 
+            if(indexPropertiesDiversity === -1)
+            {
+                const dataPropertiesDiversity =
+                {
+                    type:loc.fullName.split(', ')[1],
+                    quantity:1
+                }
+                arrayPropertiesDiversity.push(dataPropertiesDiversity)    
+            }
+            else
+            {
+                arrayPropertiesDiversity[indexPropertiesDiversity].quantity += 1    
+            }
+        })
+        setPropertiesType(arrayPropertiesType)
+        setPropertiesDiversity(arrayPropertiesDiversity)
+        setDataLength(dataRealT.filter(field=>field.rentStartDate !== null).length)
+    },[dataRealT])
     /*Formatage des nombres à virgules*/
     function formatNumber(number, decimals) 
 	{
@@ -287,20 +330,44 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
                 <div className='dashboard_text_stats'>
                     <h2>Rendement</h2>
                     <div className='dashboard_text_stats_inline_text'>
-                        <p>Rendement annuel</p>
+                        <div className='dashboard_text_stats_info_bloc'>
+                            <p>Rendement annuel actuel</p>
+                            <div className='dashboard_text_stats_info_border'>
+                                <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                <span>Prends en compte si le logement est louée</span>
+                            </div>
+                        </div>
+                        <p>{yieldStat &&(yieldStat.yieldActual === 0 ?("-"):(`${formatNumber(yieldStat.yieldActual,2)} %`))}</p>
+                    </div>
+                    <div className='dashboard_text_stats_inline_text'>
+                        <div className='dashboard_text_stats_info_bloc'>
+                            <p>Rendement annuel</p>
+                            <div className='dashboard_text_stats_info_border'>
+                                <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                <span>Rendement total sans prendre compte de la date de location</span>
+                            </div>
+                        </div>
                         <p>{yieldStat &&(yieldStat.yield === 0 ?("-"):(`${formatNumber(yieldStat.yield,2)} %`))}</p>
                     </div>
                     <div className='dashboard_text_stats_inline_text'>
-                        <p>Rendement 100% loué</p>
+                        <div className='dashboard_text_stats_info_bloc'>
+                            <p>Rendement 100% loué</p>
+                            <div className='dashboard_text_stats_info_border'>
+                                <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                <span>Basée sur le dernier rendement du logement complet ou le rendement initial si jamais louée</span>
+                            </div>
+                        </div>
                         <p>{yieldStat &&(yieldStat.yieldFull === 0 ?("-"):(`${formatNumber(yieldStat.yieldFull,2)} %`))}</p>
                     </div>
                     <div className='dashboard_text_stats_inline_text'>
-                        <p>Rendement initial</p>
+                        <div className='dashboard_text_stats_info_bloc'>
+                            <p>Rendement initial</p>
+                            <div className='dashboard_text_stats_info_border'>
+                                <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                <span>Rendement donée par RealT</span>
+                            </div>
+                        </div>
                         <p>{yieldStat &&(yieldStat.yieldInitial === 0 ?("-"):(`${formatNumber(yieldStat.yieldInitial,2)} %`))}</p>
-                    </div>
-                    <div className='dashboard_text_stats_inline_text'>
-                        <p>Rendement annuel actuel</p>
-                        <p>{yieldStat &&(yieldStat.yieldActual === 0 ?("-"):(`${formatNumber(yieldStat.yieldActual,2)} %`))}</p>
                     </div>
                 </div>
                 <div className='dashboard_text_stats'>
@@ -353,6 +420,44 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
                         <p>{rondayStat &&(rondayStat.fifth === 0 ?("-"):(rondayProperties === 'week' ?(`${formatNumber(rondayStat.fifth/52,2)} $`):(rondayProperties === 'month' ?(`${formatNumber(rondayStat.fifth/52,2)} $ - ${formatNumber(rondayStat.fifth/12,2)} $`):(`${formatNumber(rondayStat.fifth/52,2)} $ - ${formatNumber(rondayStat.fifth,2)}$`))))}</p>
                     </div>
                 </div>
+            </div>
+            <div className='dashboard_bloc_stats'>
+                <div className='dashboard_chart'>
+                    <h2>Type de propriété</h2>
+                    <PieChart datachart={propertiesType} dataLength={dataLength} />
+                </div> 
+                <div className='dashboard_chart'>
+                    <h2>Localisation des propriétés</h2>
+                    <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
+                </div>   
+            </div>
+            <div className='dashboard_bloc_stats'>
+                {dataRealT.filter(field=>field.rentStartDate !== null).map(field=>(
+                    <div className='dashboard_grid'>
+                        <img src={field.imageLink[0]} alt='' className='dashboard_grid_img'/>
+                        <p>{field.fullName}</p>
+                        <div className='dashboard_text_stats_inline_text'>
+                            <p>Token</p>
+                            <p>{formatNumber((data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value,2)}/{field.totalTokens}</p>
+                        </div>
+                        <div className='dashboard_text_stats_inline_text'>
+                            <p>Rendement Annuel</p>
+                            <p>{formatNumber(field.annualPercentageYield,2)} %</p>
+                        </div>
+                        <div className='dashboard_text_stats_inline_text'>
+                            <p>Loyers hebdomadaires</p>
+                            <p>{formatNumber(parseFloat((field.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value)/52,2)} $</p>
+                        </div>
+                        <div className='dashboard_text_stats_inline_text'>
+                            <p>Loyers annuels</p>
+                            <p>{formatNumber(parseFloat((field.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value),2)} $</p>
+                        </div>
+                        <div className='dashboard_text_stats_inline_text'>
+                            <p>Logements loués</p>
+                            <p>{field.rentedUnits}/{field.totalUnits} ({formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2)} %)</p>
+                        </div>
+                    </div>
+                ))}    
             </div>
         </div>
     )

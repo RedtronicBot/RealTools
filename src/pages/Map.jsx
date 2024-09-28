@@ -39,6 +39,12 @@ function Map({data,dataRealT,apiKey,setKey}) {
 	const [activeMarkerId, setActiveMarkerId] = useState(null)
 	const mapRef = useRef(null)
 	const YieldRangeRef = useRef(null)
+	const walletRef = useRef(null)
+	const filterRef = useRef(null)
+	const settingsRef = useRef(null)
+	const [propertyType,setPropertyType] = useState(null)
+	const [propertiesType,setPropertiesType] = useState([])
+	const selectRef = useRef(null)
 	const handleIndex = (index) =>{
 		setIndexLocation(index)
 	}
@@ -106,8 +112,21 @@ function Map({data,dataRealT,apiKey,setKey}) {
 				return false
 			})	
 		}
+		if(propertyType)
+		{
+			console.log(propertyType)
+			if(propertyType === 'Non Défini')
+			{
+				dataRealTFilter = dataRealT.filter(field=>field.rentStartDate !== null && field.propertyTypeName === null)
+			}
+			else
+			{
+				dataRealTFilter = dataRealT.filter(field=>field.propertyTypeName === propertyType)
+			}	
+				
+		}
 		setHouseNumber(dataRealTFilter)
-	},[rentedUnits,yieldRent,rentStarted,dataRealT])
+	},[rentedUnits,yieldRent,rentStarted,dataRealT,propertyType])
 	// Créer une icône personnalisée pour le marqueur
 	const getIcon = (location) => {
 		let markerIcon = red_marker
@@ -221,6 +240,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 			setRentStarted(true)
 			setRentedUnits('')
 			setYieldRent(null)
+			setPropertyType(null)
 			YieldRangeRef.current.value = 0
 		}
 		else
@@ -233,6 +253,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 		setRentStarted(null)
 		setRentedUnits(value)
 		setYieldRent(null)
+		setPropertyType(null)
 		YieldRangeRef.current.value = 0
 	}
 	const onSetYieldRent = (value) =>
@@ -240,13 +261,23 @@ function Map({data,dataRealT,apiKey,setKey}) {
 		setRentStarted(null)
 		setRentedUnits('')
 		setYieldRent(value)
+		setPropertyType(null)
+	}
+	const onSetPropertyType = (value) =>
+	{
+		setRentStarted(null)
+		setRentedUnits('')
+		setYieldRent(null)
+		setPropertyType(value)
 	}
 	const setReload = () =>
 	{
 		setRentStarted(null)
 		setRentedUnits('')
 		setYieldRent(null)
+		setPropertyType(null)
 		YieldRangeRef.current.value = 0
+		selectRef.current.value = 'reset'
 	}
 	/*Gestion fermeture de l'autre menu dans la partie Wallet/Filter */
 	const onSetWallet = () =>
@@ -320,6 +351,44 @@ function Map({data,dataRealT,apiKey,setKey}) {
 		  	.map(word => word.charAt(0).toUpperCase() + word.slice(1))
 		  	.join(' ')
 	}
+	/*Fermeture des menu Parametre/Filtre lors d'un clic extérieur*/
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+		  	if (walletRef.current && !walletRef.current.contains(event.target) && !settingsRef.current.contains(event.target) && walletMenu) 
+			{
+				setWalletmenu(!walletMenu)
+		  	}
+			if (filterRef.current && !filterRef.current.contains(event.target) && !settingsRef.current.contains(event.target) && filter) 
+			{
+				setFilter(!filter)
+			}
+		}
+		document.addEventListener("mousedown", handleClickOutside)
+		return () => {
+		  document.removeEventListener("mousedown", handleClickOutside)
+		}
+	}, [filter,walletMenu])
+	useEffect(()=>{
+        /*Filtrage des donées pour les graphiques*/
+        let arrayPropertiesType = []
+        dataRealT.filter(field=>field.rentStartDate !== null).forEach(loc =>{
+            const indexPropertiesType = arrayPropertiesType.findIndex(field=>field.type === loc.propertyTypeName)
+            if(indexPropertiesType === -1)
+            {
+                const dataPropertiesType =
+                {
+                    type:loc.propertyTypeName,
+                    quantity:1
+                }
+                arrayPropertiesType.push(dataPropertiesType)   
+            }
+            else
+            {
+                arrayPropertiesType[indexPropertiesType].quantity += 1    
+            }
+        })
+        setPropertiesType(arrayPropertiesType)
+    },[dataRealT])
     return (
 		<div className='map'>
 			<div className='map_google_maps'>
@@ -381,18 +450,18 @@ function Map({data,dataRealT,apiKey,setKey}) {
 						<p>{houseNumber.length}</p>
 						<img src={house} alt='house' height={24} className='icon' />
 					</div>
-					<div className='map_settings'>
+					<div className='map_settings' ref={settingsRef}>
 						<img src={filter_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>onSetFilter()}/>
 						<img src={gear_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>onSetWallet()} />
 					</div>
-					<div className={`map_settings_bloc_key ${walletMenu ? "open":""}`}>
+					<div className={`map_settings_bloc_key ${walletMenu ? "open":""}`} ref={walletRef}>
 						<div className='map_settings_key'>
 							<input type='text' onChange={(e)=>onSetKey(e.target.value)} />
 							<span>Portefeuille</span>
 						</div>
 					</div>
 				</div>
-				<div className={`map_filter ${filter ? "open":""}`}>
+				<div className={`map_filter ${filter ? "open":""}`} ref={filterRef}>
 					<div className='map_filter_components'>
 						<p className='map_filter_components_title'>Logement loués</p>
 						<div className='map_filter_components_radio'>
@@ -452,6 +521,12 @@ function Map({data,dataRealT,apiKey,setKey}) {
 							}
 						</div>
 						<p className='map_filter_components_title'>Type de propriété</p>
+						<select onChange={(e)=>onSetPropertyType(e.target.value)} className='map_filter_components_select' ref={selectRef}>
+							<option hidden value='reset'>-Choisir un type-</option>
+							{propertiesType.map(options=>
+								options.type === null ?(<option value={options.type}>Non Défini</option>):(<option value={options.type}>{options.type}</option>)
+							)}
+						</select>
 						<img src={refresh} alt='refresh' height={24} onClick={()=>setReload()}/>
 					</div>
 				</div>

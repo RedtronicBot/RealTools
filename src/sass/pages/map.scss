@@ -83,7 +83,10 @@
                 }
                 &_text
                 {
-                    font-size: 14px;    
+                    font-size: 14px;
+                    max-width: 130px;
+                    height: 19px;
+                    overflow: scroll;    
                 }
             }
         }
@@ -376,6 +379,17 @@
         {
             font-size: 18px;
             font-weight: bold;
+        }
+        &_select
+        {
+            background-color: #2E2E2E;
+            border: 1px solid #70757A;
+            color: #fff;
+            font-family: 'Roboto',sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            padding-left: 10px;
         }
     }
     &_filter_components::before

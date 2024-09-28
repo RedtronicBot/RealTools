@@ -92,26 +92,23 @@ function Data() {
 					var array_realT = []
 					for (let i = 0; i < array.length; i++) 
 					{
-						/*if(array[i].token !== '0x0675e8f4a52ea6c845cb6427af03616a2af42170')
-						{*/
-							try {
-								const response = await axios.get(`https://api.realt.community/v1/token/${array[i].token}`, {
-									headers: {
-										'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'
-									}
-								})
-								if(response.data.length !== 0)
-								{
-									array_realT.push(response.data)
+						try {
+							const response = await axios.get(`https://api.realt.community/v1/token/${array[i].token}`, {
+								headers: {
+									'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'
 								}
-							} 
-							catch (error)
+							})
+							if(response.data.length !== 0)
 							{
-								console.error(error)
+								array_realT.push(response.data)
 							}
-							setLoad(i + 1)
-							await new Promise(resolve => setTimeout(resolve, 150))
-						/*}*/
+						} 
+						catch (error)
+						{
+							console.error(error)
+						}
+						setLoad(i + 1)
+						await new Promise(resolve => setTimeout(resolve, 150))
 					}
 					setDataRealT(array_realT)
 				}
