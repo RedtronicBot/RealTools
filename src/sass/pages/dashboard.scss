@@ -127,7 +127,192 @@
             object-fit: cover;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
-        }    
+        } 
+        &_bloc_text
+        {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            gap: 10px;
+            padding: 0 10px 5px 10px;
+        }   
+    }
+    &_title_bloc
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+        &_components
+        {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 0 10px;
+            width: 100%;
+            gap:15px;
+        }
+        &_price
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding:5px;
+            background-color: #3a3a3a;
+            border: 1px solid #70757A;
+            border-radius: 15px;
+            width: 75px;
+        }
+        &_rent
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding:5px 7px;
+            background-color: #3a3a3a;
+            border: 1px solid #70757A;
+            border-radius: 15px;
+            gap:5px;
+            &_red
+            {
+                width: 7px;  
+                height: 7px;
+                background-color: red; 
+                border-radius: 50%; 
+            }
+            &_orange
+            {
+                width: 7px;  
+                height: 7px;
+                background-color: orange; 
+                border-radius: 50%; 
+            } 
+            &_green
+            {
+                width: 7px;  
+                height: 7px;
+                background-color: green; 
+                border-radius: 50%; 
+            }   
+        }
+    }
+    &_table
+    {
+        width: 99%;
+        border-collapse: collapse;
+        &_th
+        {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center; 
+            font-size: 18px; 
+            padding:10px 0;  
+        }
+        &_th.first 
+        {
+            justify-content: flex-start;
+        }
+        &_td
+        {
+            display: flex;
+            justify-content: flex-end;
+            padding:10px;
+            border-top: 1px solid #C9C9C9;
+        }
+        &_td.first
+        {
+            justify-content: flex-start;
+        }
+    }
+    &_bloc_select
+    {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 100%;
+        margin-right: 60px;
+        &_component
+        {
+            background-color: #2E2E2E;
+            border: 1px solid #70757A;
+            border-radius: 5px;
+            padding: 5px 0 0 10px;
+            & select
+            {
+                background-color: #2E2E2E;
+                border: none;
+                color: #fff;
+                font-family: 'Roboto',sans-serif;
+                font-size: 24px;
+                font-weight: bold;
+            }
+        }
+    }
+    &_select
+    {
+        background-color: #2E2E2E;
+        border: 1px solid #70757A;
+        color: #fff;
+        font-family: 'Roboto',sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        border-radius: 5px;
+        padding:5px 10px;
+    }
+    &_bloc_pagination
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap:10px;
+        &_components
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap:5px;
+            margin-right: 20px;
+            position: relative;
+            &_page
+            {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 20px;
+                background-color: #2E2E2E;
+                border: 1px solid #70757A;
+                padding:5px 7px;
+                border-radius: 5px;
+                height: 40px;
+                cursor: pointer;
+            }
+            &_page.selected
+            {
+                background-color: #3a3a3a;    
+            }
+            &_img
+            {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #2E2E2E;
+                border: 1px solid #70757A;
+                padding:5px 7px;
+                border-radius: 5px;
+                height: 40px;
+                & img
+                {
+                    filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);    
+                }
+            }
+            &_img.rotate
+            {
+                transform: rotate(180deg);
+            }
+        }
     }
 }
 

@@ -8,7 +8,7 @@ import gear_icon from './images/icons/gear-solid.svg'
 import Map from './pages/Map'
 import Dashboard from './pages/Dashboard'
 function Main() {
-    const {data,dataRealT,load,key,setKey,valueRmm} = Data()
+    const {data,dataRealT,load,key,setKey,valueRmm,history} = Data()
     const [openBurger,setOpenBurger] = useState(false)
     const burgerRef = useRef(null)
     const [page,setPage] = useState('Dashboard')
@@ -46,13 +46,13 @@ function Main() {
                 (dataRealT.length > 0 ?
                 (
                     <>
-                        {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} valueRmm={valueRmm} />)}
+                        {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} valueRmm={valueRmm} historyData={history} />)}
                         {page === 'Maps' && (<Map data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} />)}
                     </>
                 ):
                 (
                     <div className='map_chargement'>
-                        <h2>Loading</h2>
+                        <h2>Chargement</h2>
                         <div className='map_chargement_spinner'></div>
                         {data.length === 0 ?(<h3>0 %</h3>):(<h3>{parseInt((load/data.length)*100)} %</h3>)}
                     </div>

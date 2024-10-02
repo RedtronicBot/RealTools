@@ -6,6 +6,7 @@ function Data() {
 	const [key,setKey] = useState('')
     const [load,setLoad] = useState(0)
 	const [valueRmm,setValueRmm] = useState(0) 
+	const [history,setHistory] = useState([])
 	/*Récupération du wallet*/
 	useEffect(() => {
 		const keys = JSON.parse(localStorage.getItem('key'))
@@ -117,13 +118,22 @@ function Data() {
 			.catch(error => {
 				console.error(error)
 			})
+			axios.get(`https://api.realt.community/v1/tokenHistory`, {
+				headers: {
+					'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'
+				}
+			})
+			.then(response=>{
+				setHistory(response.data)
+			})
+			.catch(err=>console.error(err))
 		}
 	}, [key])
 	/*Stockage de la clée publique*/
 	useEffect(() => {
 		localStorage.setItem('key', JSON.stringify(key))
 	}, [key])
-	return {data,dataRealT,load,key,setKey,valueRmm}
+	return {data,dataRealT,load,key,setKey,valueRmm,history}
 }
 
 export default Data

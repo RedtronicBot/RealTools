@@ -114,7 +114,6 @@ function Map({data,dataRealT,apiKey,setKey}) {
 		}
 		if(propertyType)
 		{
-			console.log(propertyType)
 			if(propertyType === 'Non Défini')
 			{
 				dataRealTFilter = dataRealT.filter(field=>field.rentStartDate !== null && field.propertyTypeName === null)
@@ -392,43 +391,27 @@ function Map({data,dataRealT,apiKey,setKey}) {
     return (
 		<div className='map'>
 			<div className='map_google_maps'>
-			{apiKey === '' ?
-				(
-					<MapContainer center={[18.808779, -52.150144]} zoom={3} className='map' zoomControl={false}>
-						<TileLayer
-							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-							attribution="&copy; OpenStreetMap contributors"
-						/>
-					</MapContainer>
-				)
-				:
-				(
-					dataRealT.length > 0 && 
-					(
-						<MapContainer center={[18.808779, -52.150144]} zoom={3} className='map' zoomControl={false} ref={mapRef}>
-							<TileLayer
-								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-								attribution="&copy; OpenStreetMap contributors"
-							/>
-							<MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
-								{houseNumber.map((location,index) => (
-								<Marker
-									key={index}
-									icon={getIcon(location)}
-									position={[location.coordinate.lat, location.coordinate.lng]}
-									eventHandlers={{
-									click: () => handleMarkerClick(location)
-									}}
-								>
-								</Marker>
-								))}
-							</MarkerClusterGroup>
-						</MapContainer>
-					)
-				)
-			}
+				<MapContainer center={[18.808779, -52.150144]} zoom={3} className='map' zoomControl={false} ref={mapRef}>
+					<TileLayer
+						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						attribution="&copy; OpenStreetMap contributors"
+					/>
+					<MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
+						{houseNumber.map((location,index) => (
+						<Marker
+							key={index}
+							icon={getIcon(location)}
+							position={[location.coordinate.lat, location.coordinate.lng]}
+							eventHandlers={{
+							click: () => handleMarkerClick(location)
+							}}
+						>
+						</Marker>
+						))}
+					</MarkerClusterGroup>
+				</MapContainer>
 			</div>
-			{apiKey !== '' &&<div className='map_search'>
+			<div className='map_search'>
 				<div className='map_search_bloc'>
 					<input className='map_search_search_bar' onChange={(e)=>FilteredAdress(e.target.value)} ref={searchBarRef} />
 					<div className='map_search_icons'>
@@ -443,7 +426,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 						{filteredAdresses.map((address,index)=>(<p className='map_search_text' onClick={()=>zoomToCoordinate(address.name,address.lat,address.lng)} key={index}>{address.name}</p>))}
 					</div>
 				}
-			</div>}
+			</div>
 			<div className='map_marker_details'>
 				<div className='map_marker_details_bloc_settings'>
 					<div className='map_settings'>

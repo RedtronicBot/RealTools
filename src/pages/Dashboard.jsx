@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import PieChart from '../components/Pie'
 import info from '../images/icons/info-solid.svg'
-function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
+import Table from "../components/Table/Table"
+import chevron from '../images/icons/chevron.svg'
+function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
     const [rentStat,setRentStat] = useState(null)
     const [propertiesStat,setPropertiesStat] = useState(null)
     const [summaryStat,setSummaryStat] = useState(null)
@@ -13,6 +14,11 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
     const [propertiesType,setPropertiesType] = useState([])
     const [propertiesDiversity,setPropertiesDiversity] = useState([])
     const [dataLength,setDataLength] = useState(0)
+    const [tableData,setTableData] = useState([])
+    const [typeAffichage,setTypeAffichage] = useState('carte')
+    const [typeNumber,setTypeNumber] = useState('25')
+    const [slicedData,setSlicedData] = useState([])
+    const [index,setIndex] = useState(0)
     useEffect(()=>{
         /*Récupération/filtrage des données pour chaque bloc*/
         const RentObj =
@@ -64,49 +70,41 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
         PropertiesObj.averageYearlyRent = PropertiesObj.averageYearlyRent / dataRealT.filter((field)=>field.rentStartDate !== null).length
         PropertiesObj.averagePriceBought = PropertiesObj.averagePriceBought / dataRealT.filter((field)=>field.rentStartDate !== null).length
         /*Recherche de l'historique des locations*/
-        axios.get(`https://api.realt.community/v1/tokenHistory`, {
-            headers: {
-                'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'
+        dataRealT.filter((field)=>field.rentStartDate !== null).forEach(loc => {
+            /*Filtrage des location qui rapporte des rent*/
+            if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction') || loc.productType === "loan_income")
+            {
+                var history = historyData.find(obj => obj.uuid.toLowerCase() === loc.gnosisContract.toLowerCase())
+                for(var i = history.history.length-1;i >= 0;i--)
+                {
+                    if(history.history[i].values.tokenPrice !== undefined)
+                    {
+                        PropertiesObj.averageValue += history.history[i].values.tokenPrice
+                        break   
+                    }
+                }
+                for(var j = history.history.length-1;j >= 0;j--)
+                {  
+                    if((history.history[j].values.rentedUnits !== undefined && history.history[j].values.rentedUnits === loc.totalUnits && history.history[j].values.netRentYear !== undefined) || (history.history[j].values.rentedUnits === undefined && history.history[j].values.netRentYear !== undefined) || (loc.rentalType === 'pre_construction' && history.history[j].values.netRentYear !== undefined) || (loc.productType === "loan_income" && history.history[j].values.netRentYear !== undefined))
+                    {
+                        if(loc.rentalType === 'pre_construction')
+                        {
+                            YieldObj.yieldFull += (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
+                        }
+                        else
+                        {
+                            YieldObj.yieldFull += (history.history[j].values.netRentYear/history.history[0].values.totalInvestment)*100
+                        }
+                        break 
+                    }
+                }
+                YieldObj.yieldInitial += (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
             }
         })
-        .then(response=>{
-            dataRealT.filter((field)=>field.rentStartDate !== null).forEach(loc => {
-                /*Filtrage des location qui rapporte des rent*/
-                if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction') || loc.productType === "loan_income")
-                {
-                    var history = response.data.find(obj => obj.uuid.toLowerCase() === loc.gnosisContract.toLowerCase())
-                    for(var i = history.history.length-1;i >= 0;i--)
-                    {
-                        if(history.history[i].values.tokenPrice !== undefined)
-                        {
-                            PropertiesObj.averageValue += history.history[i].values.tokenPrice
-                            break   
-                        }
-                    }
-                    for(var j = history.history.length-1;j >= 0;j--)
-                    {  
-                        if((history.history[j].values.rentedUnits !== undefined && history.history[j].values.rentedUnits === loc.totalUnits && history.history[j].values.netRentYear !== undefined) || (history.history[j].values.rentedUnits === undefined && history.history[j].values.netRentYear !== undefined) || (loc.rentalType === 'pre_construction' && history.history[j].values.netRentYear !== undefined) || (loc.productType === "loan_income" && history.history[j].values.netRentYear !== undefined))
-                        {
-                            if(loc.rentalType === 'pre_construction')
-                            {
-                                YieldObj.yieldFull += (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
-                            }
-                            else
-                            {
-                                YieldObj.yieldFull += (history.history[j].values.netRentYear/history.history[0].values.totalInvestment)*100
-                            }
-                            break 
-                        }
-                    }
-                    YieldObj.yieldInitial += (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
-                }
-            })
-            PropertiesObj.averageValue = PropertiesObj.averageValue/dataRealT.filter((field)=>field.rentStartDate !== null).length
-            YieldObj.yieldFull = YieldObj.yieldFull/dataRealT.filter((field)=>field.rentStartDate !== null).length
-            YieldObj.yieldInitial = YieldObj.yieldInitial/dataRealT.filter((field)=>field.rentStartDate !== null).length
-            setPropertiesStat(PropertiesObj)
-        })
-        .catch(err=>console.error(err))
+        PropertiesObj.averageValue = PropertiesObj.averageValue/dataRealT.filter((field)=>field.rentStartDate !== null).length
+        YieldObj.yieldFull = YieldObj.yieldFull/dataRealT.filter((field)=>field.rentStartDate !== null).length
+        YieldObj.yieldInitial = YieldObj.yieldInitial/dataRealT.filter((field)=>field.rentStartDate !== null).length
+        setPropertiesStat(PropertiesObj)
         const SummaryObj =
         {
             realToken:0,
@@ -226,7 +224,7 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
         })
         YieldObj.yieldActual = YieldObj.yieldActual/FilteredData.length
         setYieldStat(YieldObj)
-    },[dataRealT,data,valueRmm,rondayProperties])
+    },[dataRealT,data,valueRmm,rondayProperties,historyData])
     useEffect(()=>{
         /*Filtrage des donées pour les graphiques*/
         let arrayPropertiesType = []
@@ -265,6 +263,43 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
         setPropertiesDiversity(arrayPropertiesDiversity)
         setDataLength(dataRealT.filter(field=>field.rentStartDate !== null).length)
     },[dataRealT])
+    /*Génération des données pour le tableau et découpage de l'array de la grille/tableau selon le choix*/
+    useEffect(()=>{
+        let arrayTable = []
+        dataRealT.filter((field)=>field.rentStartDate !== null).forEach(loc => {
+            const date = new Date(loc.rentStartDate.date)
+            const ArrayObj=
+            {
+                "propriete":loc.fullName.split(', ')[0],
+                "valeur":`${formatNumber(loc.tokenPrice*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value,2)} $`,
+                "prix":`${loc.tokenPrice} $`,
+                "rendement":`${loc.annualPercentageYield.toFixed(2)} %`,
+                "loyerHebdo":`${(loc.netRentYearPerToken / 52).toFixed(2)} $`,
+                "loyerAnnuel":`${loc.netRentYearPerToken.toFixed(2)} $`,
+                "logementLoues":`${loc.rentedUnits}/${loc.totalUnits} (${formatNumber((loc.rentedUnits/loc.totalUnits)*100,2)} %)`,
+                "premierLogement":`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
+            }
+            arrayTable.push(ArrayObj)
+        })
+        const result = []
+        const resultData = []
+        const size = parseInt(typeNumber)
+        if(dataRealT.filter(field=>field.rentStartDate !== null).length > size)
+        {
+            for (let i = 0; i < dataRealT.filter(field=>field.rentStartDate !== null).length; i += size) 
+            {
+                result.push(arrayTable.slice(i, i + size))
+                resultData.push(dataRealT.filter(field=>field.rentStartDate !== null).slice(i,i + size))
+            }
+            setTableData(result)
+            setSlicedData(resultData)
+        }
+        else
+        {
+            setTableData(arrayTable)
+            setSlicedData(dataRealT.filter(field=>field.rentStartDate !== null))
+        }
+    },[data,dataRealT,typeNumber])
     /*Formatage des nombres à virgules*/
     function formatNumber(number, decimals) 
 	{
@@ -277,6 +312,31 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
 			return number.toFixed(decimals)
 		}
 	}
+    /*Colonne du tableau*/
+    const columns = [
+        { label: "Propriété", accessor: "propriete" },
+        { label: "Valeur", accessor: "valeur" },
+        { label: "Prix", accessor: "prix" },
+        { label: "Rendement", accessor: "rendement" },
+        { label: "Loyer Hebdo", accessor: "loyerHebdo" },
+        { label: "Loyer Annuel", accessor: "loyerAnnuel" },
+        { label: "Logement Loués", accessor: "logementLoues" },
+        { label: "Date du premier logement", accessor: "premierLogement" },
+    ]
+    /*Fonction avant/arrière pour les cartes/tableau*/
+    const prevContent = () => {
+        const newIndex = index === 0 ? tableData.length - 1:index - 1
+        setIndex(newIndex) 
+    }
+    const afterContent = () => {
+        const newIndex = index === tableData.length - 1 ? 0:index + 1
+        setIndex(newIndex) 
+    }
+    const onSetTypeNumber = (value) =>
+    {
+        setTypeNumber(value)
+        setIndex(0)
+    }
     return (
         <div className='dashboard'>
             <h1 className='dashboard_title'>Realtools Dashboard</h1>
@@ -431,33 +491,126 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm}) {
                     <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
                 </div>   
             </div>
-            <div className='dashboard_bloc_stats'>
-                {dataRealT.filter(field=>field.rentStartDate !== null).map(field=>(
-                    <div className='dashboard_grid'>
-                        <img src={field.imageLink[0]} alt='' className='dashboard_grid_img'/>
-                        <p>{field.fullName}</p>
-                        <div className='dashboard_text_stats_inline_text'>
-                            <p>Token</p>
-                            <p>{formatNumber((data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value,2)}/{field.totalTokens}</p>
-                        </div>
-                        <div className='dashboard_text_stats_inline_text'>
-                            <p>Rendement Annuel</p>
-                            <p>{formatNumber(field.annualPercentageYield,2)} %</p>
-                        </div>
-                        <div className='dashboard_text_stats_inline_text'>
-                            <p>Loyers hebdomadaires</p>
-                            <p>{formatNumber(parseFloat((field.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value)/52,2)} $</p>
-                        </div>
-                        <div className='dashboard_text_stats_inline_text'>
-                            <p>Loyers annuels</p>
-                            <p>{formatNumber(parseFloat((field.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value),2)} $</p>
-                        </div>
-                        <div className='dashboard_text_stats_inline_text'>
-                            <p>Logements loués</p>
-                            <p>{field.rentedUnits}/{field.totalUnits} ({formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2)} %)</p>
-                        </div>
+            <div className='dashboard_bloc_select'>
+                <div className='dashboard_bloc_select_component'>
+                    <p>Affichage</p>
+                    <select defaultValue='carte' onChange={(e)=>setTypeAffichage(e.target.value)} className='dashboard_select'>
+                        <option value='carte'>Carte</option>
+                        <option value='tableau'>Tableau</option>
+                    </select>
+                </div>
+            </div>
+            {typeAffichage === 'carte' ?
+                (
+                    <div className='dashboard_bloc_stats'>
+                        {slicedData.length > 0 && (slicedData[index][0] !== undefined ?slicedData[index]:slicedData).map((field,index)=>{
+                            const date = new Date(field.rentStartDate.date)
+                            let yieldFull = 0
+                            let yieldInitial = 0
+                                
+                                var history = historyData.find(obj => obj.uuid.toLowerCase() === field.gnosisContract.toLowerCase())
+                                for(var j = history.history.length-1;j >= 0;j--)
+                                {  
+                                    if((history.history[j].values.rentedUnits !== undefined && history.history[j].values.rentedUnits === field.totalUnits && history.history[j].values.netRentYear !== undefined) || (history.history[j].values.rentedUnits === undefined && history.history[j].values.netRentYear !== undefined) || (field.rentalType === 'pre_construction' && history.history[j].values.netRentYear !== undefined) || (field.productType === "loan_income" && history.history[j].values.netRentYear !== undefined))
+                                    {
+                                        if(field.rentalType === 'pre_construction')
+                                        {
+                                            yieldFull = (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
+                                        }
+                                        else
+                                        {
+                                            yieldFull = (history.history[j].values.netRentYear/history.history[0].values.totalInvestment)*100
+                                        }
+                                        break 
+                                    }
+                                }
+                                yieldInitial = (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
+
+                            return(<div className='dashboard_grid' key={index}>
+                                <img src={field.imageLink[0]} alt='' className='dashboard_grid_img'/>
+                                <div className='dashboard_title_bloc'>
+                                    <p>{field.fullName.split(', ')[0]}</p>
+                                    <p className='dashboard_title_bloc_price'>{formatNumber(field.tokenPrice*data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase())[0]?.value,2)} $</p>
+                                </div>
+                                <div className='dashboard_title_bloc_components'>
+                                    {formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2) === '100' ?(<div className='dashboard_title_bloc_rent'><div className='dashboard_title_bloc_rent_green'></div><p>Louée</p></div>):(formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2)>0?(<div className='dashboard_title_bloc_rent'><div className='dashboard_title_bloc_rent_orange'></div><p>Partiellement Louée</p></div>):(<div className='dashboard_title_bloc_rent'><div className='dashboard_title_bloc_rent_red'></div><p>Non Louée</p></div>))}
+                                    {field.section8paid > 0 && <p className='dashboard_title_bloc_rent'>Subventionnée</p>}
+                                </div>
+                                <div className='dashboard_grid_bloc_text'>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Token</p>
+                                        <p>{formatNumber((data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value,2)}/{field.totalTokens}</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Rendement Annuel</p>
+                                        <p>{formatNumber(field.annualPercentageYield,2)} %</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Loyers hebdomadaires</p>
+                                        <p>{formatNumber(parseFloat((field.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value)/52,2)} $</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Loyers annuels</p>
+                                        <p>{formatNumber(parseFloat((field.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase()))[0]?.value),2)} $</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Logements loués</p>
+                                        <p>{field.rentedUnits}/{field.totalUnits} ({formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2)} %)</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Date du premier logement</p>
+                                        <p>{(date.getDate()).toString().padStart(2,"0")}/{(date.getMonth()+1).toString().padStart(2,"0")}/{date.getFullYear()}</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Rendement 100% louée</p>
+                                        <p>{formatNumber(yieldFull,2)} %</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_inline_text'>
+                                        <p>Rendement initial</p>
+                                        <p>{formatNumber(yieldInitial,2)} %</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )})}    
                     </div>
-                ))}    
+                ):
+                (
+                    tableData.length > 0 && <Table columns={columns} tableData1={tableData[index]} key={index} />
+                )
+            }
+            <div className='dashboard_bloc_pagination'>
+                {dataRealT.filter(field=>field.rentStartDate !== null).length > parseInt(typeNumber) ?
+                    (
+                        <div className='dashboard_bloc_pagination_components'>
+                            <div className='dashboard_bloc_pagination_components_img rotate'>
+                                <img src={chevron} onClick={()=>prevContent()} alt='chevron' height={18} />
+                            </div>
+                            {slicedData.map((indexNum,idx)=>{
+                                return(<p key={indexNum[0].gnosisContract} className={`dashboard_bloc_pagination_components_page ${index === idx && 'selected'}`} onClick={()=>setIndex(idx)}>{idx+1}</p>)
+                            })}
+                            <div className='dashboard_bloc_pagination_components_img'>
+                                <img src={chevron} onClick={()=>afterContent()} alt='chevron' height={18} />
+                            </div>
+                        </div>
+                    ):
+                    (
+                        <div className='dashboard_bloc_pagination_components'>
+                            <div className='dashboard_bloc_pagination_components_img rotate'>
+                                <img src={chevron} alt='chevron' height={18} />
+                            </div>
+                            <p>1</p>
+                            <div className='dashboard_bloc_pagination_components_img'>
+                                <img src={chevron} alt='chevron' height={18} />
+                            </div>
+                        </div>    
+                    )
+                }
+                <select defaultValue='25' onChange={(e)=>onSetTypeNumber(e.target.value)} className='dashboard_select'>
+                    <option value='25'>25</option>
+                    <option value='50'>50</option>
+                    <option value='100'>100</option>
+                    <option value='200'>200</option>
+                </select>
             </div>
         </div>
     )
