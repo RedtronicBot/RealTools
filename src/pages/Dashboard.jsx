@@ -3,6 +3,7 @@ import PieChart from '../components/Pie'
 import info from '../images/icons/info-solid.svg'
 import Table from "../components/Table/Table"
 import chevron from '../images/icons/chevron.svg'
+import gear_icon from '../images/icons/gear-solid.svg'
 function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
     const [rentStat,setRentStat] = useState(null)
     const [propertiesStat,setPropertiesStat] = useState(null)
@@ -19,6 +20,7 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
     const [typeNumber,setTypeNumber] = useState('25')
     const [slicedData,setSlicedData] = useState([])
     const [index,setIndex] = useState(0)
+    const [walletMenu,setWalletmenu] = useState(false)
     useEffect(()=>{
         /*Récupération/filtrage des données pour chaque bloc*/
         const RentObj =
@@ -337,9 +339,25 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
         setTypeNumber(value)
         setIndex(0)
     }
+    const onSetKey = (key) =>
+        {
+            setKey(key)
+            setTimeout(() => {
+                setWalletmenu(!walletMenu)
+            }, 10)
+        }
     return (
         <div className='dashboard'>
             <h1 className='dashboard_title'>Realtools Dashboard</h1>
+            <div className='dashboard_settings' >
+				<img src={gear_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>setWalletmenu(!walletMenu)} />
+			</div>
+            <div className={`dashboard_settings_key ${walletMenu ? "open":""}`} >
+                <div className='map_settings_key'>
+                    <input type='text' onChange={(e)=>onSetKey(e.target.value)} />
+                    <span>Portefeuille</span>
+                </div>
+            </div>
             <div className='dashboard_bloc_stats'>
                 <div className='dashboard_text_stats'>
                     <h2>Résumé</h2>
