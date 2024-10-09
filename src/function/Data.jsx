@@ -55,19 +55,22 @@ function Data() {
 							}
 							else
 							{	
-								
+								const date = new Date(parseInt(token.timeStamp)*1000)
 								const dataObj ={
 									token:token.contractAddress,
 									value:tokenValue,
+									time:date
 								}
 								array.push(dataObj)
 							}	
 						}
 						else
 						{
+							const date = new Date(parseInt(token.timeStamp)*1000)
 							const dataObj ={
 								token:token.contractAddress,
 								value:tokenValue,
+								time:date
 							}
 							array.push(dataObj)	
 						}	
@@ -101,6 +104,7 @@ function Data() {
 							})
 							if(response.data.length !== 0)
 							{
+								response.data.timeBought = array[i].time
 								array_realT.push(response.data)
 							}
 						} 

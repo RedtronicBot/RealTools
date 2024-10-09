@@ -86,7 +86,11 @@
                     font-size: 14px;
                     max-width: 130px;
                     height: 19px;
-                    overflow: scroll;    
+                    overflow-y: auto;    
+                }
+                &_text::-webkit-scrollbar
+                {
+                    display: none    
                 }
             }
         }

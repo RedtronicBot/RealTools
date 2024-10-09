@@ -1,12 +1,13 @@
 import React, { useState,useRef,useEffect } from 'react'
 import Data from './function/Data'
-/*import house from './images/icons/house-solid.svg'*/
+import money from './images/icons/money-bill-wave-solid.svg'
 import chart from './images/icons/chart-line-solid.svg'
 import location_dot from './images/icons/location-dot-solid.svg'
 import gear_icon from './images/icons/gear-solid.svg'
 /*Pages*/
 import Map from './pages/Map'
 import Dashboard from './pages/Dashboard'
+import Loyer from './pages/Loyer'
 function Main() {
     const {data,dataRealT,load,key,setKey,valueRmm,history} = Data()
     const [openBurger,setOpenBurger] = useState(false)
@@ -37,8 +38,12 @@ function Main() {
                         <p>Dashboard</p>
                     </div>
                     <div className='menu_burger_icons' onClick={()=>onSetPage('Maps')}>
-                        <img src={location_dot} width={32} alt='chart' />
+                        <img src={location_dot} width={32} alt='location_dot' />
                         <p>Carte</p>
+                    </div>
+                    <div className='menu_burger_icons' onClick={()=>onSetPage('Loyer')}>
+                        <img src={money} width={32} alt='money' />
+                        <p>Loyer</p>
                     </div>
                 </div>
             </div>
@@ -46,8 +51,9 @@ function Main() {
                 (dataRealT.length > 0 ?
                 (
                     <>
-                        {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} valueRmm={valueRmm} historyData={history} />)}
+                        {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} setKey={setKey} valueRmm={valueRmm} historyData={history} />)}
                         {page === 'Maps' && (<Map data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} />)}
+                        {page === 'Loyer' && (<Loyer data={data} dataRealT={dataRealT} setKey={setKey} />)}
                     </>
                 ):
                 (

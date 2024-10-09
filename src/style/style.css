@@ -97,7 +97,10 @@ a {
   font-size: 14px;
   max-width: 130px;
   height: 19px;
-  overflow: scroll;
+  overflow-y: auto;
+}
+.map_marker_details_components_field_text::-webkit-scrollbar {
+  display: none;
 }
 .map_settings {
   margin: 10px 0 0 0;
@@ -662,6 +665,58 @@ a {
   height: 500px;
   padding: 10px;
 }
+.dashboard_chart_loyer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #70757A;
+  background-color: #2E2E2E;
+  color: #fff;
+  width: 600px;
+  height: 500px;
+  padding: 10px;
+}
+.dashboard_chart_loyer_input_bloc {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+.dashboard_chart_loyer_input {
+  border: 1px solid #70757A;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+.dashboard_chart_loyer_input p {
+  font-size: 18px;
+}
+.dashboard_chart_loyer_input_components {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dashboard_chart_loyer_input_components p {
+  font-size: 18px;
+  font-weight: bold;
+}
+.dashboard_chart_loyer input {
+  background-color: #2E2E2E;
+  border: none;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px 5px;
+  width: 200px;
+}
 .dashboard_grid {
   display: flex;
   flex-direction: column;
@@ -875,6 +930,19 @@ a {
   align-items: center;
   width: 100%;
   height: 100%;
+}
+
+.loyer {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  height: max-content;
+  position: relative;
+  background-color: #242424;
+  color: #fff;
 }
 
 /*# sourceMappingURL=style.css.map */

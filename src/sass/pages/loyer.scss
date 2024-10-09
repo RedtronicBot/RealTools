@@ -1,0 +1,13 @@
+.loyer
+{
+    display: flex;
+    flex-direction: column;
+    gap:50px;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    height: max-content;
+    position: relative;
+    background-color: #242424;
+    color: #fff;    
+}

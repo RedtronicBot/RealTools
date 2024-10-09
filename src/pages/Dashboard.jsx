@@ -4,7 +4,7 @@ import info from '../images/icons/info-solid.svg'
 import Table from "../components/Table/Table"
 import chevron from '../images/icons/chevron.svg'
 import gear_icon from '../images/icons/gear-solid.svg'
-function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
+function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
     const [rentStat,setRentStat] = useState(null)
     const [propertiesStat,setPropertiesStat] = useState(null)
     const [summaryStat,setSummaryStat] = useState(null)
@@ -340,12 +340,12 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
         setIndex(0)
     }
     const onSetKey = (key) =>
-        {
-            setKey(key)
-            setTimeout(() => {
-                setWalletmenu(!walletMenu)
-            }, 10)
-        }
+    {
+        setKey(key)
+        setTimeout(() => {
+            setWalletmenu(!walletMenu)
+        }, 10)
+    }
     return (
         <div className='dashboard'>
             <h1 className='dashboard_title'>Realtools Dashboard</h1>
@@ -467,7 +467,6 @@ function Dashboard({data,dataRealT,apiKey,setKey,valueRmm,historyData}) {
                         <p>{rentStat &&(rentStat.rentYearly === 0 ?("-"):(`${formatNumber(rentStat.rentYearly,2)} $`))}</p>
                     </div>
                 </div>
-                
                 <div className='dashboard_text_stats'>
                     <div className='dashboard_text_stats_inline_text'>
                         <h2>Prochain Loyer</h2>
