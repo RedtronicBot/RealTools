@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/RealTools/static/css/main.8bd93f71.css",
-    "main.js": "/RealTools/static/js/main.4f8f0350.js",
+    "main.css": "/RealTools/static/css/main.6bee6678.css",
+    "main.js": "/RealTools/static/js/main.adc5cf5f.js",
     "static/media/portfolio.png": "/RealTools/static/media/portfolio.2a8bd98da672e58a6e28.png",
     "static/media/quadplex.png": "/RealTools/static/media/quadplex.4fdc211754120020e6a6.png",
     "static/media/gear-solid.svg": "/RealTools/static/media/gear-solid.0d170579c1e397e19e20dcee9db5daec.svg",
@@ -10,6 +10,7 @@
     "static/media/arrows-rotate-solid.svg": "/RealTools/static/media/arrows-rotate-solid.33f750b027732a2b50e76ccd5b185986.svg",
     "static/media/store-solid.svg": "/RealTools/static/media/store-solid.cff94bdbdb30003a884f3fc5c3948cf6.svg",
     "static/media/house-solid.svg": "/RealTools/static/media/house-solid.9ae583ec1fd9ce36b21898d6827170a6.svg",
+    "static/media/money-bill-wave-solid.svg": "/RealTools/static/media/money-bill-wave-solid.9c1bdc48dad8e22c4b92aaa6ba30192e.svg",
     "index.html": "/RealTools/index.html",
     "static/media/house-user-solid.svg": "/RealTools/static/media/house-user-solid.eca03e83b236110a5523d23d6a94a815.svg",
     "static/media/chart-line-solid.svg": "/RealTools/static/media/chart-line-solid.8375bbdf0db652a364ac49691742c9b2.svg",
@@ -19,11 +20,11 @@
     "static/media/filter-solid.svg": "/RealTools/static/media/filter-solid.2a94cd134364999afd5f1507b731f054.svg",
     "static/media/chevron.svg": "/RealTools/static/media/chevron.0cc2834c5b72ead6355dcf336cea13c4.svg",
     "static/media/location-dot-solid.svg": "/RealTools/static/media/location-dot-solid.bc52c126a8a9f8a031f4829b78803a5d.svg",
-    "main.8bd93f71.css.map": "/RealTools/static/css/main.8bd93f71.css.map",
-    "main.4f8f0350.js.map": "/RealTools/static/js/main.4f8f0350.js.map"
+    "main.6bee6678.css.map": "/RealTools/static/css/main.6bee6678.css.map",
+    "main.adc5cf5f.js.map": "/RealTools/static/js/main.adc5cf5f.js.map"
   },
   "entrypoints": [
-    "static/css/main.8bd93f71.css",
-    "static/js/main.4f8f0350.js"
+    "static/css/main.6bee6678.css",
+    "static/js/main.adc5cf5f.js"
   ]
 }
