@@ -4,37 +4,13 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
 
-function InteretCompose({datachart}){
+function LineChart({datachart}){
     const data = {
         labels: datachart.map(field=>field.date), 
         datasets: [
             {
-                label: 'Capital Réinvesti',
-                data: datachart.map(field=>field.capitalReinvest), 
-                borderColor: '#FB773C', 
-                backgroundColor: '#FB773C', 
-                yAxisID: 'y1',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#FB773C',
-                pointBorderColor: '#FB773C',
-            },
-            {
-                label: 'Capital',
-                data: datachart.map(field=>field.capital),
-                borderColor: '#00712D', 
-                backgroundColor: '#00712D',
-                yAxisID: 'y1',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#00712D',
-                pointBorderColor: '#00712D',
-            },
-            {
                 label: 'Loyers Cumulés',
-                data: datachart.map(field=>field.cumulatedRent),
+                data: datachart.map(field=>field.rentCumulated),
                 borderColor: 'rgba(75, 192, 192, 1)', 
                 backgroundColor: 'rgba(75, 192, 192, 1)',
                 yAxisID: 'y1',
@@ -55,13 +31,14 @@ function InteretCompose({datachart}){
                 pointHoverRadius: 5,
                 pointBackgroundColor: 'rgba(153, 102, 255, 1)',
                 pointBorderColor: 'rgba(153, 102, 255, 1)',
-            },
+            }
         ]
     }
 
   const options = {
     tension:0.2,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
         tooltip: {
             mode: 'index',
@@ -76,7 +53,7 @@ function InteretCompose({datachart}){
                 }
                 if (context.parsed.y !== null) 
                 {
-                    label += context.parsed.y.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    label += context.parsed.y.toFixed(2)
                 }
                 label += ' $'
                 return label
@@ -93,14 +70,18 @@ function InteretCompose({datachart}){
         legend: 
         {
             display: true,
-            position:'top',
+            position:'bottom',
+            align:'start',
             labels: {
-                boxWidth: 15,
-                padding: 10,
+                usePointStyle: true,
+                pointStyle: 'circle',
+                boxWidth: 5,
+                boxHeight: 5,
+                padding: 15,
                 color: '#fff',
                 font: 
                 {
-                    size: 16, 
+                    size: 12, 
                     weight: 'bold',
                 }
             }
@@ -123,7 +104,7 @@ function InteretCompose({datachart}){
                 callback: function (value, index, values) 
                 {
                     const totalLabels = values.length  
-                    const step = Math.ceil(totalLabels / 10) 
+                    const step = Math.floor(totalLabels / 12) 
                     if (index % step === 0) 
                     {
                         return this.getLabelForValue(value)
@@ -141,7 +122,7 @@ function InteretCompose({datachart}){
             position: 'left',
             title: {
                 display: true,
-                text: 'Capital Réinvesti',
+                text: 'Loyers Cumulée',
                 color: 'white'
             },
             grid: {
@@ -149,6 +130,8 @@ function InteretCompose({datachart}){
             },
             ticks: {
                 color:'white',
+                stepSize: 10,
+                beginAtZero: true
             },
             border: {
                 color: 'white'
@@ -167,7 +150,8 @@ function InteretCompose({datachart}){
             },
             ticks: {
                 color:'white',
-                stepSize: 5,
+                stepSize: 1,
+                beginAtZero: true
             },
             border: {
                 color: 'white'
@@ -179,4 +163,4 @@ function InteretCompose({datachart}){
   return <Line data={data} options={options} />
 }
 
-export default InteretCompose
+export default LineChart

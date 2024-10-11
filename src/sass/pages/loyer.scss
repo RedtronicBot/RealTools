@@ -2,12 +2,91 @@
 {
     display: flex;
     flex-direction: column;
-    gap:50px;
+    gap:30px;
     align-items: center;
     width: 100%;
     min-height: 100vh;
     height: max-content;
     position: relative;
     background-color: #242424;
-    color: #fff;    
+    color: #fff;   
+    &_chart
+    {
+        display: flex;
+        flex-direction: column;
+        gap:10px;
+        justify-content: flex-start;
+        align-items: center;
+        border-radius: 12px;
+        border:1px solid #70757A;
+        background-color: #2E2E2E;
+        color: #fff;
+        width: 600px;
+        height: 500px;
+        padding: 10px; 
+        &_input_bloc
+        {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            align-items: flex-start;
+            width: 100%;
+            &_components
+            {
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                gap:10px;
+            }
+        }
+        &_input
+        {
+            border: 1px solid #70757A;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            border-radius: 5px;
+            padding: 5px 10px;
+            & p
+            {
+                font-size: 18px;
+            }
+            &_components
+            {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                & p
+                {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+            }
+        }
+        & input
+        {
+            background-color: #2E2E2E;
+            border: none;
+            color: #fff;
+            font-family: 'Roboto',sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 5px;
+            padding:5px 5px; 
+            width: 200px;   
+        }   
+    }
+    &_graph_loyer_cumule
+    {
+        width: 328px;
+        height: 200px;
+    } 
+    &_graph_interet
+    {
+        width: 578px;
+        height: 360px;
+    }
 }
+

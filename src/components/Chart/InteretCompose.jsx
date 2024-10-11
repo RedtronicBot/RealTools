@@ -4,7 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
 
-function InteretComposeReel({datachart,datareal}){
+function InteretCompose({datachart}){
     const data = {
         labels: datachart.map(field=>field.date), 
         datasets: [
@@ -56,60 +56,13 @@ function InteretComposeReel({datachart,datareal}){
                 pointBackgroundColor: 'rgba(153, 102, 255, 1)',
                 pointBorderColor: 'rgba(153, 102, 255, 1)',
             },
-            {
-                label: 'Capital Réinvesti Réel',
-                data: datareal.map(field=>field.capitalReinvest), 
-                borderColor: '#FFEB00', 
-                backgroundColor: '#FFEB00', 
-                yAxisID: 'y1',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#FFEB00',
-                pointBorderColor: '#FFEB00',
-            },
-            {
-                label: 'Capital Réel',
-                data: datareal.map(field=>field.capital),
-                borderColor: '#FF8A8A', 
-                backgroundColor: '#FF8A8A',
-                yAxisID: 'y1',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#FF8A8A',
-                pointBorderColor: '#FF8A8A',
-            },
-            {
-                label: 'Loyers Cumulés Réel',
-                data: datareal.map(field=>field.cumulatedRent),
-                borderColor: '#0F2C67', 
-                backgroundColor: '#0F2C67',
-                yAxisID: 'y1',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#0F2C67',
-                pointBorderColor: '#0F2C67',
-            },
-            {
-                label: 'Loyers Réel',
-                data: datareal.map(field=>field.rent), 
-                borderColor: '#F5004F', 
-                backgroundColor: '#F5004F', 
-                yAxisID: 'y2',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#F5004F',
-                pointBorderColor: '#F5004F',
-            },
         ]
     }
 
   const options = {
     tension:0.2,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
         tooltip: {
             mode: 'index',
@@ -141,14 +94,18 @@ function InteretComposeReel({datachart,datareal}){
         legend: 
         {
             display: true,
-            position:'top',
+            position:'bottom',
+            align:'start',
             labels: {
-                boxWidth: 10,
-                padding: 10,
+                usePointStyle: true,
+                pointStyle: 'circle',
+                boxWidth: 5,
+                boxHeight: 5,
+                padding: 15,
                 color: '#fff',
                 font: 
                 {
-                    size: 14, 
+                    size: 12, 
                     weight: 'bold',
                 }
             }
@@ -227,4 +184,4 @@ function InteretComposeReel({datachart,datareal}){
   return <Line data={data} options={options} />
 }
 
-export default InteretComposeReel
+export default InteretCompose

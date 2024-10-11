@@ -108,65 +108,7 @@
         width: 750px;
         height: 500px;
         padding: 10px;
-        &_loyer
-        {
-            display: flex;
-            flex-direction: column;
-            gap:10px;
-            justify-content: center;
-            align-items: center;
-            border-radius: 12px;
-            border:1px solid #70757A;
-            background-color: #2E2E2E;
-            color: #fff;
-            width: 600px;
-            height: 500px;
-            padding: 10px; 
-            &_input_bloc
-            {
-                display: flex;
-                justify-content: center;
-                gap: 10px;
-                align-items: center;
-            }
-            &_input
-            {
-                border: 1px solid #70757A;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: flex-start;
-                border-radius: 5px;
-                padding: 5px 10px;
-                & p
-                {
-                    font-size: 18px;
-                }
-                &_components
-                {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    & p
-                    {
-                        font-size: 18px;
-                        font-weight: bold;
-                    }
-                }
-            }
-            & input
-            {
-                background-color: #2E2E2E;
-                border: none;
-                color: #fff;
-                font-family: 'Roboto',sans-serif;
-                font-size: 24px;
-                font-weight: bold;
-                border-radius: 5px;
-                padding:5px 5px; 
-                width: 200px;   
-            }   
-        }
+        
     }
     &_grid
     {

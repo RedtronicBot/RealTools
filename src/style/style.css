@@ -665,58 +665,6 @@ a {
   height: 500px;
   padding: 10px;
 }
-.dashboard_chart_loyer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 12px;
-  border: 1px solid #70757A;
-  background-color: #2E2E2E;
-  color: #fff;
-  width: 600px;
-  height: 500px;
-  padding: 10px;
-}
-.dashboard_chart_loyer_input_bloc {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  align-items: center;
-}
-.dashboard_chart_loyer_input {
-  border: 1px solid #70757A;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  border-radius: 5px;
-  padding: 5px 10px;
-}
-.dashboard_chart_loyer_input p {
-  font-size: 18px;
-}
-.dashboard_chart_loyer_input_components {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.dashboard_chart_loyer_input_components p {
-  font-size: 18px;
-  font-weight: bold;
-}
-.dashboard_chart_loyer input {
-  background-color: #2E2E2E;
-  border: none;
-  color: #fff;
-  font-family: "Roboto", sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  border-radius: 5px;
-  padding: 5px 5px;
-  width: 200px;
-}
 .dashboard_grid {
   display: flex;
   flex-direction: column;
@@ -935,7 +883,7 @@ a {
 .loyer {
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 30px;
   align-items: center;
   width: 100%;
   min-height: 100vh;
@@ -943,6 +891,74 @@ a {
   position: relative;
   background-color: #242424;
   color: #fff;
+}
+.loyer_chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #70757A;
+  background-color: #2E2E2E;
+  color: #fff;
+  width: 600px;
+  height: 500px;
+  padding: 10px;
+}
+.loyer_chart_input_bloc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+}
+.loyer_chart_input_bloc_components {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 10px;
+}
+.loyer_chart_input {
+  border: 1px solid #70757A;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+.loyer_chart_input p {
+  font-size: 18px;
+}
+.loyer_chart_input_components {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loyer_chart_input_components p {
+  font-size: 18px;
+  font-weight: bold;
+}
+.loyer_chart input {
+  background-color: #2E2E2E;
+  border: none;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px 5px;
+  width: 200px;
+}
+.loyer_graph_loyer_cumule {
+  width: 328px;
+  height: 200px;
+}
+.loyer_graph_interet {
+  width: 578px;
+  height: 360px;
 }
 
 /*# sourceMappingURL=style.css.map */

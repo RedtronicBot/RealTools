@@ -506,8 +506,8 @@ function Map({data,dataRealT,apiKey,setKey}) {
 						<p className='map_filter_components_title'>Type de propriété</p>
 						<select onChange={(e)=>onSetPropertyType(e.target.value)} className='map_filter_components_select' ref={selectRef}>
 							<option hidden value='reset'>-Choisir un type-</option>
-							{propertiesType.map(options=>
-								options.type === null ?(<option value={options.type}>Non Défini</option>):(<option value={options.type}>{options.type}</option>)
+							{propertiesType.map((options,index)=>
+								options.type === null ?(<option value={options.type} key={index}>Non Défini</option>):(<option value={options.type} key={index}>{options.type}</option>)
 							)}
 						</select>
 						<img src={refresh} alt='refresh' height={24} onClick={()=>setReload()}/>
