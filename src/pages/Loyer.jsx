@@ -1,4 +1,4 @@
-import React, { useRef,useState } from 'react'
+import React, { useEffect,useRef,useState } from 'react'
 import gear_icon from '../images/icons/gear-solid.svg'
 import LineChart from '../components/Chart/Line'
 import InteretCompose from '../components/Chart/InteretCompose'
@@ -8,6 +8,9 @@ import ProchainLoyer from '../function/LoyerData'
 import InteretComposeData from '../function/InteretComposeData'
 import InteretRealData from '../function/InteretRealData'
 import InteretRealAlternateData from '../function/InteretRealAlternateData'
+import InteretComposeAlternateData from '../function/InteretComposeAlternateData'
+import maximize from '../images/icons/maximize-solid.svg'
+import cross from '../images/icons/x-solid.svg'
 function Loyer({data,dataRealT,setKey}) {
     const [rondayProperties,setRondayProperties] =useState('week')
     const [walletMenu,setWalletmenu] = useState(false)
@@ -15,15 +18,20 @@ function Loyer({data,dataRealT,setKey}) {
     const [monthInvestment,setMonthInvestment] = useState(12)
     const [investmentWeekReal,setInvestmentWeekReal] = useState(0)
     const [monthInvestmentReal,setMonthInvestmentReal] = useState(12)
-    const [investmentWeekRealAlternative,setInvestmentWeekRealAlternative] = useState(0)
-    const [monthInvestmentRealAlternative,setMonthInvestmentRealAlternative] = useState(12)
     const investmentRef = useRef(null)
-    const investmentRefAlternative = useRef(null)
+    const investmentRefExpand =useRef(null)
+    const [compoundInterest,setCompoundInterest] =useState(false)
+    const [compoundInterestReal,setCompoundInterestReal] =useState(false)
+    const [open,setOpen] = useState(false)
     const {rentData} = LoyerCumules(data,dataRealT)
+    const [expand,setExpand] = useState('')
     const {rondayStat,date,rentStat} = ProchainLoyer(data,dataRealT,rondayProperties)
     const {interestData} = InteretComposeData(dataRealT,data,rentData,investmentWeek,monthInvestment)
-    const {interestDataProj,realData} = InteretRealData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef)
-    const {interestDataProjAlternate,realDataAlternate} = InteretRealAlternateData(dataRealT,data,rentData,investmentWeekRealAlternative,monthInvestmentRealAlternative,setInvestmentWeekRealAlternative,investmentRefAlternative)
+    const {interestDataAlternate} = InteretComposeAlternateData(dataRealT,data,rentData,investmentWeek,monthInvestment)
+    const {interestDataProj,realData} = InteretRealData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef,compoundInterestReal,investmentRefExpand,open,expand)
+    const {interestDataProjAlternate,realDataAlternate} = InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef,compoundInterestReal,investmentRefExpand,open,expand)
+    
+    const expandRef = useRef(null)
     /*Formatage des nombres à virgules*/
     function formatNumber(number, decimals) 
 	{
@@ -43,6 +51,34 @@ function Loyer({data,dataRealT,setKey}) {
             setWalletmenu(!walletMenu)
         }, 10)
     }
+    const onSetCompoundInterest = () => {
+        setCompoundInterest(!compoundInterest)
+        setInvestmentWeekReal(0)    
+    }
+    const onSetCompoundInterestReal = () => {
+        setCompoundInterestReal(!compoundInterestReal)
+        setInvestmentWeekReal(0)    
+    }
+    const onSetExpand = (value) => {
+        setExpand(value)
+        setOpen(true)
+        setInvestmentWeekReal(0)    
+    }
+    /*Fermeture des menu Parametre/Filtre lors d'un clic extérieur*/
+	useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (expandRef.current && expandRef.current.contains(event.target)) {
+                if (event.target.classList.contains('loyer_expand')) {
+                    setOpen(!open)
+                }
+            }
+        }
+      
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [open])
     return(
         <div className='loyer'>
             <h1 className='dashboard_title'>Loyers</h1>
@@ -109,13 +145,23 @@ function Loyer({data,dataRealT,setKey}) {
                     <h2>Loyers Cumulés</h2>
                     <div className='loyer_graph_loyer_cumule'>
                         {rentData.length > 0 && <LineChart datachart={rentData} />}
+                        <img src={maximize} alt='' className='loyer_expand_img' width={24} onClick={()=>onSetExpand('loyer')} />
                     </div>
                 </div>
             </div>
             <div className='dashboard_bloc_stats'>
                 <div className='loyer_chart'>
                     <div className='loyer_chart_input_bloc'>
-                        <h2>Intéret Composés</h2>
+                        <div className="loyer_title">
+                            <h2>Intéret Composés ({compoundInterest ?`Base en cours : ${interestData.length > 0 && interestData[0].capital.toFixed(2)} $`:`Base Total : ${interestDataAlternate.length > 0 && interestDataAlternate[0].capital.toFixed(2)} $`})</h2>
+                            <div className='loyer_bloc_checkbox'>
+                                <p>Total</p>
+                                <div className='loyer_checkbox' onClick={()=>onSetCompoundInterest()}>
+                                    <div className={`loyer_checkbox_components ${compoundInterest ?"true":"false"}`}></div>
+                                </div>
+                                <p>En cours</p>
+                            </div>
+                        </div>
                         <div className='loyer_chart_input_bloc_components'>
                             <div className='loyer_chart_input'>
                                 <p>Investissement par semaine</p>
@@ -131,18 +177,28 @@ function Loyer({data,dataRealT,setKey}) {
                         </div>
                     </div>
                    <div className='loyer_graph_interet'>
-                        <InteretCompose datachart={interestData}/>
+                        <InteretCompose datachart={compoundInterest?interestData:interestDataAlternate}/>
+                        <img src={maximize} alt='' className='loyer_expand_img' width={24} onClick={()=>onSetExpand('interest')} />
                     </div>
                 </div>
                 <div className='loyer_chart'>
                     <div className='loyer_chart_input_bloc'>
-                        <h2>Titre</h2>
+                        <div className="loyer_title">
+                            <h2>Évolution du capital ({realData.length > 0 && realDataAlternate.length >0 && compoundInterestReal ?`Base en cours : ${realData.length > 0 && realData[realData.length-1].capital.toFixed(2)} $`:`Base Total : ${realDataAlternate.length > 0 && realDataAlternate[realDataAlternate.length-1].capital.toFixed(2)} $`})</h2>
+                            <div className='loyer_bloc_checkbox'>
+                                <p>Total</p>
+                                <div className='loyer_checkbox' onClick={()=>onSetCompoundInterestReal()}>
+                                    <div className={`loyer_checkbox_components ${compoundInterestReal ?"true":"false"}`}></div>
+                                </div>
+                                <p>En cours</p>
+                            </div>
+                        </div>
                         <div className='loyer_chart_input_bloc_components'>
                             <div className='loyer_chart_input'>
                                 <p>Investissement par semaine</p>
                                 <div className='loyer_chart_input_components'>
                                     <p>$</p>
-                                    <input type='number' ref={investmentRef} onChange={(e)=>setInvestmentWeekReal(e.target.value)}/>
+                                    <input type='number' value={investmentWeekReal.toString() || ''} onChange={(e)=>setInvestmentWeekReal(e.target.value)}/>
                                 </div>
                             </div>
                             <div className='loyer_chart_input'>
@@ -152,29 +208,79 @@ function Loyer({data,dataRealT,setKey}) {
                         </div>
                     </div>
                     <div className='loyer_graph_interet'>
-                        <InteretComposeReel datachart={interestDataProj} datareal={realData}/>
+                        <InteretComposeReel datachart={compoundInterestReal?interestDataProj:interestDataProjAlternate} datareal={compoundInterestReal?realData:realDataAlternate}/>
+                        <img src={maximize} alt='' className='loyer_expand_img' width={24} onClick={()=>onSetExpand('interestReal')} />
                     </div>
                 </div>
-                <div className='loyer_chart'>
-                    <div className='loyer_chart_input_bloc'>
-                        <h2>Titre</h2>
-                        <div className='loyer_chart_input_bloc_components'>
-                            <div className='loyer_chart_input'>
-                                <p>Investissement par semaine</p>
-                                <div className='loyer_chart_input_components'>
-                                    <p>$</p>
-                                    <input type='number' ref={investmentRefAlternative} onChange={(e)=>setInvestmentWeekRealAlternative(e.target.value)}/>
+            </div>
+            <div className={`loyer_expand ${open ?"open":""}`} ref={expandRef}>
+                <div className='loyer_expand_components'>
+                    {expand === 'loyer'?(
+                        <LineChart datachart={rentData}/>    
+                    ):(expand === 'interest'?(
+                        <div className='loyer_expand_components_sub'>
+                            <div className='loyer_chart_input_bloc'>
+                                <div className="loyer_title">
+                                    <h2>Intéret Composés ({compoundInterest ?`Base en cours : ${interestData.length > 0 && interestData[0].capital.toFixed(2)} $`:`Base Total : ${interestDataAlternate.length > 0 && interestDataAlternate[0].capital.toFixed(2)} $`})</h2>
+                                    <div className='loyer_bloc_checkbox'>
+                                        <p>Total</p>
+                                        <div className='loyer_checkbox' onClick={()=>onSetCompoundInterest()}>
+                                            <div className={`loyer_checkbox_components ${compoundInterest ?"true":"false"}`}></div>
+                                        </div>
+                                        <p>En cours</p>
+                                    </div>
+                                </div>
+                                <div className='loyer_chart_input_bloc_components'>
+                                    <div className='loyer_chart_input'>
+                                        <p>Investissement par semaine</p>
+                                        <div className='loyer_chart_input_components'>
+                                            <p>$</p>
+                                            <input type='number' defaultValue={50} onChange={(e)=>setInvestmentWeek(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <div className='loyer_chart_input'>
+                                        <p>Nombre de mois</p>
+                                        <input type='number' defaultValue={12} onChange={(e)=>setMonthInvestment(e.target.value)}/>
+                                    </div>
                                 </div>
                             </div>
-                            <div className='loyer_chart_input'>
-                                <p>Nombre de mois</p>
-                                <input type='number' defaultValue={12} onChange={(e)=>setMonthInvestmentRealAlternative(e.target.value)}/>
+                            <div className='loyer_expand_chart'>
+                                <InteretCompose datachart={compoundInterest?interestData:interestDataAlternate}/>
                             </div>
                         </div>
-                    </div>
-                    <div className='loyer_graph_interet'>
-                        <InteretComposeReel datachart={interestDataProjAlternate} datareal={realDataAlternate}/>
-                    </div>
+                    ):(expand === 'interestReal' && 
+                        <div className='loyer_expand_components_sub'>
+                            <div className='loyer_chart_input_bloc'>
+                                <div className="loyer_expand_title">
+                                    <h2>Évolution du capital ({realData.length > 0 && realDataAlternate.length >0 && compoundInterestReal ?`Base en cours : ${realData.length > 0 && realData[realData.length-1].capital.toFixed(2)} $`:`Base Total : ${realDataAlternate.length > 0 && realDataAlternate[realDataAlternate.length-1].capital.toFixed(2)} $`})</h2>
+                                    <div className='loyer_bloc_checkbox'>
+                                        <p>Total</p>
+                                        <div className='loyer_checkbox' onClick={()=>onSetCompoundInterestReal()}>
+                                            <div className={`loyer_checkbox_components ${compoundInterestReal ?"true":"false"}`}></div>
+                                        </div>
+                                        <p>En cours</p>
+                                    </div>
+                                </div>
+                                <div className='loyer_chart_input_bloc_components'>
+                                    <div className='loyer_chart_input'>
+                                        <p>Investissement par semaine</p>
+                                        <div className='loyer_chart_input_components'>
+                                            <p>$</p>
+                                            <input type='number' ref={investmentRefExpand} value={investmentWeekReal.toString() || ''} onChange={(e)=>setInvestmentWeekReal(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <div className='loyer_chart_input'>
+                                        <p>Nombre de mois</p>
+                                        <input type='number' defaultValue={12} onChange={(e)=>setMonthInvestmentReal(e.target.value)}/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='loyer_expand_chart'>
+                                <InteretComposeReel datachart={compoundInterestReal?interestDataProj:interestDataProjAlternate} datareal={compoundInterestReal?realData:realDataAlternate}/>
+                            </div>
+                        </div>
+                    ))}
+                    <img src={cross} alt='' onClick={()=>setOpen(!open)} width={20} className='loyer_expand_components_img' />
                 </div>
             </div>
         </div>

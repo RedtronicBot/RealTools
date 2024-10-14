@@ -1,6 +1,6 @@
 import { useState,useEffect} from 'react'
 
-function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef) {
+function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef,compoundInterestReal,investmentRefExpand,open,expand) {
     
     const [interestDataProjAlternate,setInterestDataProjAlternate] = useState([])
     const [realDataAlternate,setRealDataAlternate] = useState([])
@@ -43,48 +43,7 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
             const diffInMsMoyenne = Math.abs(dateGraph - today)
             const weeksMoyenne = diffInMsMoyenne / oneWeekInMs
             const arrayGraph = []
-            const dateMoyenne = new Date(dateGraph)
-            const dateMoyenneBefore = new Date(dateGraph)
-            dateMoyenneBefore.setDate(dateMoyenneBefore.getDate()-7)
-            for(var k=0;k <parseInt(weeksMoyenne);k++)
-            {
-                let rentLoop = 0
-                let moyenneLoop = 0
-                dataRealT.filter((field) => {
-                    if (field.rentStartDate !== null) {
-                        const date = field.rentStartDate.date
-                        const newDate = date.replace(' ', 'T')
-                        const rentStartedDate = new Date(newDate)
-                        return dateMoyenne >= rentStartedDate.getTime()
-                    }
-                    return false
-                }).forEach(loc => {
-                    let rentYear = parseFloat(loc.netRentYearPerToken*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value)
-                    if(dateMoyenne >= loc.timeBought)
-                    {
-                        rentLoop += rentYear / 52
-                    }
-                })
-                dataRealT.filter((field) => {
-                    if (field.rentStartDate !== null) {
-                        const rentDate = new Date(field.timeBought)
-                        return dateMoyenneBefore <= rentDate && dateMoyenne >= rentDate
-                    }
-                    return false
-                }).forEach(loc => {
-                    let price = loc.tokenPrice*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value
-                    moyenneLoop += price - rentLoop
-                })
-                moyenne += moyenneLoop
-                dateMoyenneBefore.setDate(dateMoyenneBefore.getDate()+7)
-                dateMoyenne.setDate(dateMoyenne.getDate()+7)
-            }
-            moyenne /= weeksMoyenne
-            if(investmentWeekReal === 0)
-            {
-                setInvestmentWeekReal(Math.round(moyenne))
-                investmentRef.current.defaultValue = Math.round(moyenne)
-            }
+            
             for(var j=0;j <parseInt(weeks);j++)
             {
                 
@@ -143,13 +102,19 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
                         date:date
                     }
                     arrayGraph.push(rentRealObj) 
+                    moyenne = capitalLoop
                 }
                 dateGraph.setDate(dateGraph.getDate()+7)
+            }
+            moyenne /= weeksMoyenne
+            if(investmentWeekReal === 0 && !compoundInterestReal)
+            {
+                setInvestmentWeekReal(Math.round(moyenne))
             }
             setInterestDataProjAlternate(arrayInterest)
             setRealDataAlternate(arrayGraph)
         }
-    },[dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,investmentRef,setInvestmentWeekReal])
+    },[dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,investmentRef,setInvestmentWeekReal,compoundInterestReal,investmentRefExpand,open,expand])
     return {interestDataProjAlternate,realDataAlternate}
 }
 

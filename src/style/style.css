@@ -902,7 +902,7 @@ a {
   border: 1px solid #70757A;
   background-color: #2E2E2E;
   color: #fff;
-  width: 600px;
+  width: 800px;
   height: 500px;
   padding: 10px;
 }
@@ -941,6 +941,28 @@ a {
   font-size: 18px;
   font-weight: bold;
 }
+.loyer_chart_input_components input {
+  background-color: #2E2E2E;
+  border: none;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px 5px;
+  width: 200px;
+}
+.loyer_chart_input input {
+  background-color: #2E2E2E;
+  border: none;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px 5px;
+  width: 200px;
+}
 .loyer_chart input {
   background-color: #2E2E2E;
   border: none;
@@ -953,12 +975,104 @@ a {
   width: 200px;
 }
 .loyer_graph_loyer_cumule {
+  position: relative;
   width: 328px;
   height: 200px;
 }
 .loyer_graph_interet {
-  width: 578px;
+  position: relative;
+  width: 778px;
   height: 360px;
+}
+.loyer_bloc_checkbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.loyer_checkbox {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  width: 40px;
+  padding: 0 2px;
+}
+.loyer_checkbox_components {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  transition: transform 0.5s ease-in-out;
+}
+.loyer_checkbox_components.true {
+  background-color: green;
+  transform: translateX(18px);
+}
+.loyer_checkbox_components.false {
+  background-color: red;
+}
+.loyer_expand {
+  display: none;
+}
+.loyer_expand_img {
+  position: absolute;
+  filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+  cursor: pointer;
+  right: 0;
+  bottom: 0;
+}
+.loyer_expand_components {
+  z-index: 1001;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #70757A;
+  background-color: #2E2E2E;
+  color: #fff;
+  width: 1600px;
+  height: 900px;
+  padding: 10px;
+}
+.loyer_expand_components_img {
+  position: absolute;
+  filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+  cursor: pointer;
+  right: 10px;
+  top: 10px;
+}
+.loyer_expand_components_sub {
+  width: 100%;
+  height: 100%;
+}
+.loyer_expand_chart {
+  width: 100%;
+  height: 820px;
+}
+.loyer_expand_title {
+  width: 98%;
+  display: flex;
+  justify-content: space-between;
+}
+.loyer_expand.open {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(29, 29, 29, 0.5);
+  z-index: 1000;
+}
+.loyer_title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 /*# sourceMappingURL=style.css.map */
