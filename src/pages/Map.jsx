@@ -193,6 +193,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 			contract: loc.gnosisContract,
 			ownedToken: (data.filter((field) => field.token === loc.gnosisContract.toLowerCase()))[0]?.value,
 			marketplaceLink: loc.marketplaceLink,
+			coordinate: loc.coordinate
 		}
 		array_location.push(locationObj)
 		setSelectedLocation(array_location)
@@ -522,6 +523,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 						<div className='map_marker_details_components_boutons'>
 							<a href={selectedLocation[indexLocation].marketplaceLink} className='bouton_marker_details' target="_blank" rel="noreferrer">RealT</a>
 							<a href={`https://dashboard.realt.community/asset/${selectedLocation[indexLocation].contract}`} className='bouton_marker_details' target="_blank" rel="noreferrer">Dashboard</a>
+							<a href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${selectedLocation[indexLocation].coordinate.lat},${selectedLocation[indexLocation].coordinate.lng}&heading=210&pitch=10&fov=80`} className='bouton_marker_details' target="_blank" rel="noreferrer">Map</a>
 						</div>
 						<p className='map_marker_details_components_title'>Loyer</p>
 						<div className='map_marker_details_components_field'>

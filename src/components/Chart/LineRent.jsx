@@ -4,19 +4,23 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
 
-function LineChart({datachart}){
+function LineChartRent({datachart,datatoken}){
     const partialLabels = datachart.map(field => {
         let annee = field.date.substring(6, 10)
         let mois = field.date.substring(3, 5)
 
         return `${mois}/${annee}`
     })
+    const array = []
+    for(var i = 0;i < datachart.length;i++) {
+        array.push(datatoken[0])
+    }
     const data = {
         labels: partialLabels, 
         datasets: [
             {
-                label: 'Loyers Cumulés',
-                data: datachart.map(field=>field.rentCumulated),
+                label: 'Loyer',
+                data: datachart.map(field=>field.rent),
                 borderColor: 'rgba(75, 192, 192, 1)', 
                 backgroundColor: 'rgba(75, 192, 192, 1)',
                 yAxisID: 'y1',
@@ -27,16 +31,17 @@ function LineChart({datachart}){
                 pointBorderColor: 'rgba(75, 192, 192, 1)',
             },
             {
-                label: 'Loyers',
-                data: datachart.map(field=>field.rent), 
+                label: 'Prix du token',
+                data: array.map(field=>field.tokenPrice), 
                 borderColor: 'rgba(153, 102, 255, 1)', 
                 backgroundColor: 'rgba(153, 102, 255, 1)', 
-                yAxisID: 'y2',
+                yAxisID: 'y1',
                 pointStyle: 'circle',
                 pointRadius: 0,
                 pointHoverRadius: 5,
                 pointBackgroundColor: 'rgba(153, 102, 255, 1)',
                 pointBorderColor: 'rgba(153, 102, 255, 1)',
+                spanGaps: true,
             }
         ]
     }
@@ -111,12 +116,12 @@ function LineChart({datachart}){
                 display: false
             },
             ticks: {
-                callback: function (value, index, values) 
-                {
-                    const totalLabels = values.length  
-                    const step = Math.floor(totalLabels / 12) 
-                    if (index % step === 0) 
-                    {
+                callback: function (value, index, values) {
+                    const totalLabels = values.length
+                    const maxTicks = 8
+                    const step = Math.max(1, Math.floor(totalLabels / maxTicks))
+                    
+                    if (index % step === 0 || index === totalLabels - 1) {  
                         return this.getLabelForValue(value)
                     }
                     return ''
@@ -132,7 +137,7 @@ function LineChart({datachart}){
             position: 'left',
             title: {
                 display: true,
-                text: 'Loyers Cumulée',
+                text: 'Loyer',
                 color: 'white'
             },
             grid: {
@@ -146,26 +151,6 @@ function LineChart({datachart}){
             border: {
                 color: 'white'
             }
-        },
-        y2: {
-            type: 'linear',
-            position: 'right',
-            title: {
-                display: true,
-                text: 'Loyers',
-                color: 'white'
-            },
-            grid: {
-                drawOnChartArea: false
-            },
-            ticks: {
-                color:'white',
-                stepSize: 1,
-                beginAtZero: true
-            },
-            border: {
-                color: 'white'
-            }
         }
       }
     }
@@ -173,4 +158,4 @@ function LineChart({datachart}){
   return <Line data={data} options={options} />
 }
 
-export default LineChart
+export default LineChartRent

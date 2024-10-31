@@ -4,7 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
 
-function LineChart({datachart}){
+function LineChartRoi({datachart}){
     const partialLabels = datachart.map(field => {
         let annee = field.date.substring(6, 10)
         let mois = field.date.substring(3, 5)
@@ -15,8 +15,8 @@ function LineChart({datachart}){
         labels: partialLabels, 
         datasets: [
             {
-                label: 'Loyers Cumulés',
-                data: datachart.map(field=>field.rentCumulated),
+                label: 'Performance',
+                data: datachart.map(field=>field.roi),
                 borderColor: 'rgba(75, 192, 192, 1)', 
                 backgroundColor: 'rgba(75, 192, 192, 1)',
                 yAxisID: 'y1',
@@ -25,18 +25,6 @@ function LineChart({datachart}){
                 pointHoverRadius: 5,
                 pointBackgroundColor: 'rgba(75, 192, 192, 1)',
                 pointBorderColor: 'rgba(75, 192, 192, 1)',
-            },
-            {
-                label: 'Loyers',
-                data: datachart.map(field=>field.rent), 
-                borderColor: 'rgba(153, 102, 255, 1)', 
-                backgroundColor: 'rgba(153, 102, 255, 1)', 
-                yAxisID: 'y2',
-                pointStyle: 'circle',
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointBackgroundColor: 'rgba(153, 102, 255, 1)',
-                pointBorderColor: 'rgba(153, 102, 255, 1)',
             }
         ]
     }
@@ -65,7 +53,7 @@ function LineChart({datachart}){
                 {
                     label += context.parsed.y.toFixed(2)
                 }
-                label += ' $'
+                label += ' %'
                 return label
             },
             labelColor: function(context) 
@@ -111,12 +99,12 @@ function LineChart({datachart}){
                 display: false
             },
             ticks: {
-                callback: function (value, index, values) 
-                {
-                    const totalLabels = values.length  
-                    const step = Math.floor(totalLabels / 12) 
-                    if (index % step === 0) 
-                    {
+                callback: function (value, index, values) {
+                    const totalLabels = values.length
+                    const maxTicks = 10
+                    const step = Math.max(1, Math.floor(totalLabels / maxTicks))
+                    
+                    if (index % step === 0 || index === totalLabels - 1) {  
                         return this.getLabelForValue(value)
                     }
                     return ''
@@ -132,7 +120,7 @@ function LineChart({datachart}){
             position: 'left',
             title: {
                 display: true,
-                text: 'Loyers Cumulée',
+                text: 'Performance',
                 color: 'white'
             },
             grid: {
@@ -141,27 +129,6 @@ function LineChart({datachart}){
             ticks: {
                 color:'white',
                 stepSize: 10,
-                beginAtZero: true
-            },
-            border: {
-                color: 'white'
-            }
-        },
-        y2: {
-            type: 'linear',
-            position: 'right',
-            title: {
-                display: true,
-                text: 'Loyers',
-                color: 'white'
-            },
-            grid: {
-                drawOnChartArea: false
-            },
-            ticks: {
-                color:'white',
-                stepSize: 1,
-                beginAtZero: true
             },
             border: {
                 color: 'white'
@@ -173,4 +140,4 @@ function LineChart({datachart}){
   return <Line data={data} options={options} />
 }
 
-export default LineChart
+export default LineChartRoi

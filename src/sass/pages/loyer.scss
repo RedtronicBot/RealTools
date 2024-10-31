@@ -201,6 +201,69 @@
             display: flex;
             justify-content: space-between;
         }
+        &_graph
+        {
+            z-index: 1001;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            border:1px solid #70757A;
+            background-color: #2E2E2E;
+            color: #fff;
+            width: 800px;
+            height: 900px;
+            padding: 10px;
+            &_sub
+            {
+                position: relative;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                align-items: center;
+            }
+            &_components
+            {
+                position: relative;
+                height: 339px;
+                width: 389px;
+                & img 
+                {
+                    position: absolute;
+                    bottom: 10px;
+                    right:10px;
+                    filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+                    cursor: pointer;
+                }
+            }  
+        }
+        &_description
+        {
+            display: flex;
+            gap:100px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            &_sub
+            {
+                display: flex;
+                flex-direction: column;
+                gap:10px;
+            }
+            &_paragraph_bloc
+            {
+                display: flex;
+                gap:10px;
+            }
+            &_paragraph
+            {
+                display: flex;
+                flex-direction: column;
+                gap:10px;
+            }
+        }
     }
     &_expand.open
     {
@@ -212,6 +275,7 @@
         height: 100vh;
         background-color: rgba(29, 29, 29, .5);
         z-index: 1000;
+        top:0;
     }
     &_title
     {

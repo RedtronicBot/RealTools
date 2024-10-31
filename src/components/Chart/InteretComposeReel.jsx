@@ -4,9 +4,15 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
 
-function InteretComposeReel({datachart,datareal}){
+function InteretComposeReel({datachart,datareal,dataloyer}){
+    const partialLabels = datachart.map(field => {
+        let annee = field.date.substring(6, 10)
+        let mois = field.date.substring(3, 5)
+
+        return `${mois}/${annee}`
+    })
     const data = {
-        labels: datachart.map(field=>field.date), 
+        labels: partialLabels, 
         datasets: [
             {
                 label: 'Capital Réinvesti',
@@ -73,7 +79,7 @@ function InteretComposeReel({datachart,datareal}){
             },
             {
                 label: 'Loyers Cumulés Réel',
-                data: datareal.map(field=>field.cumulatedRent),
+                data: dataloyer.map(field=>field.rentCumulated),
                 borderColor: '#EAAC7F', 
                 backgroundColor: '#EAAC7F',
                 yAxisID: 'y1',
@@ -98,7 +104,7 @@ function InteretComposeReel({datachart,datareal}){
             },
             {
                 label: 'Loyers Réel',
-                data: datareal.map(field=>field.rent), 
+                data: dataloyer.map(field=>field.rent), 
                 borderColor: '#F5004F', 
                 backgroundColor: '#F5004F', 
                 yAxisID: 'y2',
@@ -120,6 +126,10 @@ function InteretComposeReel({datachart,datareal}){
             mode: 'index',
             intersect: false,
             callbacks: {
+            title: function (context) {
+                let index = context[0].dataIndex
+                return datachart[index].date
+            },
             label: function (context) {
                 let label = context.dataset.label || ''
 

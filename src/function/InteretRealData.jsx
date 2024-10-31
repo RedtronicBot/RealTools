@@ -47,7 +47,7 @@ function InteretRealData(dataRealT,data,rentData,investmentWeekReal,monthInvestm
             for(var j=0;j <parseInt(weeks);j++)
             {
                 
-                date = `${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
+                date = `${dateGraph.getDate().toString().padStart(2,"0")}/${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
                 capitalProj += parseInt(investmentWeekReal) 
                 capitalReinvestProj = capitalReinvestProj * (1+(yieldRentProj/100)/52) + parseInt(investmentWeekReal) 
                 cumulatedRentProj += rentProj
@@ -78,9 +78,14 @@ function InteretRealData(dataRealT,data,rentData,investmentWeekReal,monthInvestm
                         }
                         return false
                     }).forEach(loc => {
+                        const date = loc.rentStartDate.date
+                        const newDate = date.replace(' ', 'T')
+                        const rentDate = new Date(newDate)
                         let rentYear = parseFloat((loc.netRentYearPerToken).toFixed(2)*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value)
+                        if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (dateGraph > rentDate && (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction')) || loc.productType === "loan_income") {
+                            rentLoop += rentYear /52
+                        }
                         let price = loc.tokenPrice*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value
-                        rentLoop += rentYear /52
                         capitalLoop += price
                         yieldLoop += loc.annualPercentageYield
                     })
@@ -112,6 +117,7 @@ function InteretRealData(dataRealT,data,rentData,investmentWeekReal,monthInvestm
                 }
                 dateGraph.setDate(dateGraph.getDate()+7)
             }
+            
             moyenne /= weeksMoyenne
             if(investmentWeekReal === 0 && compoundInterestReal)
             {

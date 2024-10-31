@@ -3,7 +3,6 @@ import gear_icon from '../images/icons/gear-solid.svg'
 import LineChart from '../components/Chart/Line'
 import InteretCompose from '../components/Chart/InteretCompose'
 import InteretComposeReel from '../components/Chart/InteretComposeReel'
-import LoyerCumules from '../function/LoyerCumules'
 import ProchainLoyer from '../function/LoyerData'
 import InteretComposeData from '../function/InteretComposeData'
 import InteretRealData from '../function/InteretRealData'
@@ -11,7 +10,7 @@ import InteretRealAlternateData from '../function/InteretRealAlternateData'
 import InteretComposeAlternateData from '../function/InteretComposeAlternateData'
 import maximize from '../images/icons/maximize-solid.svg'
 import cross from '../images/icons/x-solid.svg'
-function Loyer({data,dataRealT,setKey}) {
+function Loyer({data,dataRealT,setKey,rentData}) {
     const [rondayProperties,setRondayProperties] =useState('week')
     const [walletMenu,setWalletmenu] = useState(false)
     const [investmentWeek,setInvestmentWeek] = useState(50)
@@ -23,7 +22,6 @@ function Loyer({data,dataRealT,setKey}) {
     const [compoundInterest,setCompoundInterest] =useState(false)
     const [compoundInterestReal,setCompoundInterestReal] =useState(false)
     const [open,setOpen] = useState(false)
-    const {rentData} = LoyerCumules(data,dataRealT)
     const [expand,setExpand] = useState('')
     const {rondayStat,date,rentStat} = ProchainLoyer(data,dataRealT,rondayProperties)
     const {interestData} = InteretComposeData(dataRealT,data,rentData,investmentWeek,monthInvestment)
@@ -64,7 +62,7 @@ function Loyer({data,dataRealT,setKey}) {
         setOpen(true)
         setInvestmentWeekReal(0)    
     }
-    /*Fermeture des menu Parametre/Filtre lors d'un clic extérieur*/
+    /*Fermeture du menu expand lors d'un clic extérieur*/
 	useEffect(() => {
         const handleClickOutside = (event) => {
             if (expandRef.current && expandRef.current.contains(event.target)) {
@@ -208,7 +206,7 @@ function Loyer({data,dataRealT,setKey}) {
                         </div>
                     </div>
                     <div className='loyer_graph_interet'>
-                        <InteretComposeReel datachart={compoundInterestReal?interestDataProj:interestDataProjAlternate} datareal={compoundInterestReal?realData:realDataAlternate}/>
+                        <InteretComposeReel datachart={compoundInterestReal?interestDataProj:interestDataProjAlternate} datareal={compoundInterestReal?realData:realDataAlternate} dataloyer={rentData} />
                         <img src={maximize} alt='' className='loyer_expand_img' width={24} onClick={()=>onSetExpand('interestReal')} />
                     </div>
                 </div>

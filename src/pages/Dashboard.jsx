@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef,useEffect, useState } from 'react'
 import PieChart from '../components/Chart//Pie'
 import info from '../images/icons/info-solid.svg'
 import Table from "../components/Table/Table"
 import chevron from '../images/icons/chevron.svg'
 import gear_icon from '../images/icons/gear-solid.svg'
 import DashboardData from '../function/DashboardData'
+import maximize from '../images/icons/maximize-solid.svg'
+import cross from '../images/icons/x-solid.svg'
+import chart from '../images/icons/chart-line-solid.svg'
+import LineChartToken from '../components/Chart/LineToken'
+import LocationData from '../function/LocationData'
+import LineChartRent from '../components/Chart/LineRent'
+import LineChartYield from '../components/Chart/LineYield'
+import LineChartRoi from '../components/Chart/LineRoi'
+import search from '../images/icons/magnifying-glass-solid.svg'
 function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
     const [propertiesType,setPropertiesType] = useState([])
     const [propertiesDiversity,setPropertiesDiversity] = useState([])
@@ -16,7 +25,21 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
     const [index,setIndex] = useState(0)
     const [walletMenu,setWalletmenu] = useState(false)
     const [dataLength,setDataLength] = useState(0)
+    const [expand,setExpand] = useState('')
+    const [open,setOpen] = useState(false)
+    const expandRef = useRef(null)
     const {rentStat,propertiesStat,summaryStat,date,rondayStat,yieldStat} = DashboardData(data,dataRealT,valueRmm,historyData,rondayProperties)
+    const [scrollY, setScrollY] = useState(0)
+    const [contract,setContract] =useState("")
+    const expandGraphRef =useRef(null)
+    const [openGraph,setOpenGraph] = useState(false)
+    const {token,rent,yieldData,yieldInitial,roi} = LocationData(historyData,dataRealT,contract)
+    const [location,setLocation] = useState([])
+    const [openGraphSub,setOpenGraphSub] = useState(false)
+    const expandGraphSubRef = useRef(null)
+    const [expandGraph,setExpandGraph] = useState('')
+    const [searchLocation,setSearchLocation] = useState('')
+    const searchBarRef = useRef(null)
     useEffect(()=>{
         /*Filtrage des donées pour les graphiques*/
         let arrayPropertiesType = []
@@ -66,32 +89,40 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                 "valeur":`${formatNumber(loc.tokenPrice*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value,2)} $`,
                 "prix":`${loc.tokenPrice} $`,
                 "rendement":`${loc.annualPercentageYield.toFixed(2)} %`,
-                "loyerHebdo":`${(loc.netRentYearPerToken / 52).toFixed(2)} $`,
-                "loyerAnnuel":`${loc.netRentYearPerToken.toFixed(2)} $`,
+                "loyerHebdo":`${((loc.netRentYearPerToken / 52)*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value).toFixed(2)} $`,
+                "loyerAnnuel":`${(loc.netRentYearPerToken*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value).toFixed(2)} $`,
                 "logementLoues":`${loc.rentedUnits}/${loc.totalUnits} (${formatNumber((loc.rentedUnits/loc.totalUnits)*100,2)} %)`,
-                "premierLogement":`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
+                "premierLogement":`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`,
+                "gnosisContract":loc.gnosisContract.toLowerCase(),
+                "rentStartDate":loc.rentStartDate.date,
+                "rentalType":loc.rentalType.trim().toLowerCase(),
+                "fullName":loc.fullName
             }
             arrayTable.push(ArrayObj)
         })
         const result = []
         const resultData = []
         const size = parseInt(typeNumber)
-        if(dataRealT.filter(field=>field.rentStartDate !== null).length > size)
-        {
-            for (let i = 0; i < dataRealT.filter(field=>field.rentStartDate !== null).length; i += size) 
+        const filteredDataRealT = searchLocation === '' ? dataRealT.filter(field=>field.rentStartDate !== null):dataRealT.filter(field=>field.fullName.includes(searchLocation))
+        const filteredArrayTable = searchLocation === '' ? arrayTable:arrayTable.filter(field=>field.fullName.includes(searchLocation))
+        if(filteredDataRealT.length > size)
+        {  
+            
+            for (let i = 0; i < filteredDataRealT.length; i += size) 
             {
-                result.push(arrayTable.slice(i, i + size))
-                resultData.push(dataRealT.filter(field=>field.rentStartDate !== null).slice(i,i + size))
+                result.push(filteredArrayTable.slice(i, i + size))
+                resultData.push(filteredDataRealT.slice(i,i + size))
             }
             setTableData(result)
             setSlicedData(resultData)
         }
         else
         {
-            setTableData(arrayTable)
-            setSlicedData(dataRealT.filter(field=>field.rentStartDate !== null))
+            result.push(filteredArrayTable)
+            setTableData(result)
+            setSlicedData([filteredDataRealT])
         }
-    },[data,dataRealT,typeNumber])
+    },[data,dataRealT,typeNumber,searchLocation])
     /*Formatage des nombres à virgules*/
     function formatNumber(number, decimals) 
 	{
@@ -104,6 +135,14 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
 			return number.toFixed(decimals)
 		}
 	}
+    const onSetExpand = (value) => {
+        setExpand(value)
+        setOpen(true)    
+    }
+    const onSetExpandGraph = (value) => {
+        setExpandGraph(value)
+        setOpenGraphSub(true)    
+    }
     /*Colonne du tableau*/
     const columns = [
         { label: "Propriété", accessor: "propriete" },
@@ -135,6 +174,106 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
         setTimeout(() => {
             setWalletmenu(!walletMenu)
         }, 10)
+    }
+    /*Fermeture du menu expand lors d'un clic extérieur*/
+	useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (expandRef.current && expandRef.current.contains(event.target)) {
+                if (event.target.classList.contains('loyer_expand')) {
+                    setOpen(!open)
+                }
+            }
+        }
+      
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [open])
+    /*Désactivation/activation du scroll si on expand ou non*/
+    useEffect(() => {
+        if (open) {
+            document.body.style.overflow = 'hidden'
+            expandRef.current.style.top = `${scrollY}px`
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+        
+        if (openGraph) {
+            document.body.style.overflow = 'hidden'
+            expandGraphRef.current.style.top = `${scrollY}px`
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+
+        if (openGraphSub) {
+            document.body.style.overflow = 'hidden'
+            expandGraphSubRef.current.style.top = `${scrollY}px`
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto'
+        }
+    }, [open,openGraph,openGraphSub,scrollY])
+    const handleScroll = () => {
+        setScrollY(window.scrollY)
+    }
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll)
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
+
+    /*Fermeture du menu expand lors d'un clic extérieur*/
+	useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (expandGraphRef.current && expandGraphRef.current.contains(event.target)) {
+                if (event.target.classList.contains('loyer_expand')) {
+                    setOpenGraph(!openGraph)
+                }
+            }
+        }
+      
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [openGraph])
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (expandGraphSubRef.current && expandGraphSubRef.current.contains(event.target)) {
+                if (event.target.classList.contains('loyer_expand')) {
+                    setOpenGraphSub(!openGraphSub)
+                }
+            }
+        }
+      
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [openGraphSub])
+    const onSetContract = (value) => {
+        setContract(value)
+        setOpenGraph(!openGraph)
+    }
+    useEffect(()=>{
+        if(contract !== "")
+        {
+            const contractLocation = dataRealT.find(loc => loc.gnosisContract.toLowerCase() === contract)
+            setLocation(contractLocation)
+        }
+    },[contract,dataRealT])
+    function onSearchLocation(value) {
+        setSearchLocation(value)
+        setIndex(0)
+    }
+    function resetSearch(){
+        searchBarRef.current.value = ''
+        setSearchLocation('')
     }
     return (
         <div className='dashboard'>
@@ -292,13 +431,24 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                 <div className='dashboard_chart'>
                     <h2>Type de propriété</h2>
                     <PieChart datachart={propertiesType} dataLength={dataLength} />
+                    <img src={maximize} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand('type')} />
                 </div> 
                 <div className='dashboard_chart'>
                     <h2>Localisation des propriétés</h2>
                     <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
+                    <img src={maximize} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand('disversity')} />
                 </div>   
             </div>
             <div className='dashboard_bloc_select'>
+                <div className='map_search_bloc'>
+                    <input className='map_search_search_bar' onChange={(e)=>onSearchLocation(e.target.value)} ref={searchBarRef} />
+					<div className='map_search_icons'>
+						{searchBarRef.current && searchBarRef.current.value === '' ?
+							(<img src={search} alt='search' height={20} />):
+							(<img src={cross} alt='cross' height={20} onClick={()=>resetSearch('')} />)
+						}
+					</div>
+				</div>
                 <div className='dashboard_bloc_select_component'>
                     <p>Affichage</p>
                     <select defaultValue='carte' onChange={(e)=>setTypeAffichage(e.target.value)} className='dashboard_select'>
@@ -310,8 +460,12 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
             {typeAffichage === 'carte' ?
                 (
                     <div className='dashboard_bloc_stats'>
-                        {slicedData.length > 0 && (slicedData[index][0] !== undefined ?slicedData[index]:slicedData).map((field,index)=>{
+                        {slicedData.length > 0 && slicedData[index].map((field,index)=>{
                             const date = new Date(field.rentStartDate.date)
+                            const FieldDate = field.rentStartDate.date
+                            const newDate = FieldDate.replace(' ', 'T')
+                            const rentStartedDate = new Date(newDate)
+                            const today = new Date()
                             let yieldFull = 0
                             let yieldInitial = 0
                                 
@@ -337,7 +491,10 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                 <img src={field.imageLink[0]} alt='' className='dashboard_grid_img'/>
                                 <div className='dashboard_title_bloc'>
                                     <p>{field.fullName.split(', ')[0]}</p>
-                                    <p className='dashboard_title_bloc_price'>{formatNumber(field.tokenPrice*data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase())[0]?.value,2)} $</p>
+                                    <div className='dashboard_grid_graph'>
+                                        <p className='dashboard_title_bloc_price'>{formatNumber(field.tokenPrice*data.filter((dataField) => dataField.token === field.gnosisContract.toLowerCase())[0]?.value,2)} $</p>
+                                        {((history.history.length > 0 && today > rentStartedDate) || (history.history.length > 0 && field.rentalType.trim().toLowerCase() === 'pre_construction'))&& <img src={chart} alt='' height={20} className='dashboard_grid_graph_img' onClick={()=>onSetContract(field.gnosisContract.toLowerCase())} />}
+                                    </div>
                                 </div>
                                 <div className='dashboard_title_bloc_components'>
                                     {formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2) === '100' ?(<div className='dashboard_title_bloc_rent'><div className='dashboard_title_bloc_rent_green'></div><p>Louée</p></div>):(formatNumber((parseInt(field.rentedUnits)/parseInt(field.totalUnits))*100,2)>0?(<div className='dashboard_title_bloc_rent'><div className='dashboard_title_bloc_rent_orange'></div><p>Partiellement Louée</p></div>):(<div className='dashboard_title_bloc_rent'><div className='dashboard_title_bloc_rent_red'></div><p>Non Louée</p></div>))}
@@ -382,7 +539,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                     </div>
                 ):
                 (
-                    tableData.length > 0 && <Table columns={columns} tableData1={tableData[index]} key={index} />
+                    tableData.length > 0 && <Table columns={columns} tableData1={tableData[index]} key={index} onSetContract={onSetContract} historyData={historyData} />
                 )
             }
             <div className='dashboard_bloc_pagination'>
@@ -393,7 +550,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                 <img src={chevron} onClick={()=>prevContent()} alt='chevron' height={18} />
                             </div>
                             {slicedData.map((indexNum,idx)=>{
-                                return(<p key={indexNum[0].gnosisContract} className={`dashboard_bloc_pagination_components_page ${index === idx && 'selected'}`} onClick={()=>setIndex(idx)}>{idx+1}</p>)
+                                return(<p key={idx} className={`dashboard_bloc_pagination_components_page ${index === idx && 'selected'}`} onClick={()=>setIndex(idx)}>{idx+1}</p>)
                             })}
                             <div className='dashboard_bloc_pagination_components_img'>
                                 <img src={chevron} onClick={()=>afterContent()} alt='chevron' height={18} />
@@ -405,7 +562,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                             <div className='dashboard_bloc_pagination_components_img rotate'>
                                 <img src={chevron} alt='chevron' height={18} />
                             </div>
-                            <p>1</p>
+                            <p className='dashboard_bloc_pagination_components_page'>1</p>
                             <div className='dashboard_bloc_pagination_components_img'>
                                 <img src={chevron} alt='chevron' height={18} />
                             </div>
@@ -418,6 +575,89 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                     <option value='100'>100</option>
                     <option value='200'>200</option>
                 </select>
+            </div>
+            <div className={`loyer_expand ${open ?"open":""}`} ref={expandRef}>
+                <div className='loyer_expand_components'>
+                    {expand === 'type' ?(
+                        <div className='dashboard_expand'>
+                            <h2>Type de propriété</h2>
+                            <PieChart datachart={propertiesType} dataLength={dataLength} />
+                        </div>
+                    ):(
+                        <div className='dashboard_expand'>
+                            <h2>Localisation des propriétés</h2>
+                            <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
+                        </div>
+                    )} 
+                    <img src={cross} alt='' onClick={()=>setOpen(!open)} width={20} className='loyer_expand_components_img' />
+                </div>   
+            </div>
+            <div className={`loyer_expand ${openGraph ?"open":""}`} ref={expandGraphRef}>
+                {location.fullName !== undefined && <div className='loyer_expand_graph'>
+                    <div className='loyer_expand_description'>
+                        <img src={location.imageLink[0]} height='150px' alt='' />
+                        <div className='loyer_expand_description_sub'>
+                            <h3>{location.fullName}</h3>
+                            <div className='loyer_expand_description_paragraph_bloc'>
+                                <div className='loyer_expand_description_paragraph'>
+                                    <p>Token {formatNumber((data.filter((dataField) => dataField.token === location.gnosisContract.toLowerCase()))[0]?.value,2)}/{location.totalTokens}</p>
+                                    <p>Rendement {formatNumber(location.annualPercentageYield,2)} %</p>
+                                </div>
+                                <div className='loyer_expand_description_paragraph'>
+                                    <p>Loyer Hebdomadaire {formatNumber(parseFloat((location.netRentYearPerToken).toFixed(2)*(data.filter((dataField) => dataField.token === location.gnosisContract.toLowerCase()))[0]?.value)/52,2)} $</p>
+                                    <p>Logement Louées {location.rentedUnits}/{location.totalUnits} ({formatNumber((parseInt(location.rentedUnits)/parseInt(location.totalUnits))*100,2)} %)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='loyer_expand_graph_sub'>
+                        <div className='loyer_expand_graph_components'>
+                            <LineChartToken datachart={token}/>
+                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('token')} />
+                        </div>
+                        <div className='loyer_expand_graph_components'>
+                            <LineChartRent datachart={rent} datatoken={token} />
+                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('loyer')} />
+                        </div>
+                        <div className='loyer_expand_graph_components'>
+                            <LineChartYield datachart={yieldData} datainitial={yieldInitial} />
+                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('yield')} />
+                        </div>
+                        <div className='loyer_expand_graph_components'>
+                            <LineChartRoi datachart={roi} />
+                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('roi')} />
+                        </div>
+                    </div>
+                    <img src={cross} alt='' onClick={()=>setOpenGraph(!openGraph)} width={20} className='loyer_expand_components_img' />
+                </div>}   
+            </div>
+            <div className={`loyer_expand ${openGraphSub ?"open":""}`} ref={expandGraphSubRef}>
+                <div className='loyer_expand_components'>
+                    {expandGraph === 'token' ?(
+                        <div className='dashboard_expand'>
+                            <h2>Évolution du token</h2>
+                            <LineChartToken datachart={token}/>
+                        </div>
+                    ):(expandGraph === 'loyer' ?(
+                        <div className='dashboard_expand'>
+                            <h2>Loyer cumulés/Prix d'achat</h2>
+                            <LineChartRent datachart={rent} datatoken={token} />
+                        </div>
+                        ):(expandGraph === 'yield' ?(
+                            <div className='dashboard_expand'>
+                                <h2>Rendement Actuel/Initial</h2>
+                                <LineChartYield datachart={yieldData} datainitial={yieldInitial} />
+                            </div>
+                            ):(
+                                <div className='dashboard_expand'>
+                                    <h2>Performance du loyer</h2>
+                                    <LineChartRoi datachart={roi} />
+                                </div>
+                            )    
+                        )
+                    )} 
+                    <img src={cross} alt='' onClick={()=>setOpenGraphSub(!openGraphSub)} width={20} className='loyer_expand_components_img' />
+                </div>   
             </div>
         </div>
     )

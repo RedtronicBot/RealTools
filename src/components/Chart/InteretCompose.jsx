@@ -5,8 +5,14 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
 
 function InteretCompose({datachart}){
+    const partialLabels = datachart.map(field => {
+        let annee = field.date.substring(6, 10)
+        let mois = field.date.substring(3, 5)
+
+        return `${mois}/${annee}`
+    })
     const data = {
-        labels: datachart.map(field=>field.date), 
+        labels: partialLabels, 
         datasets: [
             {
                 label: 'Capital Réinvesti',
@@ -68,6 +74,10 @@ function InteretCompose({datachart}){
             mode: 'index',
             intersect: false,
             callbacks: {
+            title: function (context) {
+                let index = context[0].dataIndex
+                return datachart[index].date
+            },
             label: function (context) {
                 let label = context.dataset.label || ''
 

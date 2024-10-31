@@ -15,12 +15,17 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
         let CumultedRentReal = 0
         let capitalReinvestReal = 0
         let moyenne = 0
+        let capitalReal = 0
         const arrayInterest = []
-        let dateGraph
-        dateGraph = new Date(dataRealT[0].timeBought)
+
+        let dateGraph = new Date(dataRealT[0].timeBought)
         const dayGraph = dateGraph.getDay()
         var daysBefore = dayGraph === 0 ? 6:dayGraph - 1
         dateGraph.setDate((dateGraph.getDate()-daysBefore) + 7)
+
+        let dateGraphBefore = new Date(dateGraph)
+        dateGraphBefore.setDate((dateGraphBefore.getDate()-daysBefore)-6)
+
         var today = new Date()
         var todayDay = today.getDay()
         var daysBeforeToday = todayDay === 0 ? 6:todayDay - 1
@@ -39,15 +44,13 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
             const oneWeekInMs = oneDayInMs * 7
             const diffInMs = Math.abs(dateGraph - lastInterestDate)
             const weeks = diffInMs / oneWeekInMs
-
             const diffInMsMoyenne = Math.abs(dateGraph - today)
             const weeksMoyenne = diffInMsMoyenne / oneWeekInMs
             const arrayGraph = []
-            
             for(var j=0;j <parseInt(weeks);j++)
             {
                 
-                date = `${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
+                date = `${dateGraph.getDate().toString().padStart(2,"0")}/${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
                 capitalProj += parseInt(investmentWeekReal) 
                 capitalReinvestProj = capitalReinvestProj * (1+(yieldRentProj/100)/52) + parseInt(investmentWeekReal) 
                 cumulatedRentProj += rentProj
@@ -63,10 +66,10 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
                 arrayInterest.push(rentObj)
                 let rentLoop = 0
                 let capitalLoop = 0
-                let yieldLoop = 0
                 /*Si la date ne dépasse pas aujourd'hui -> récupération des données réeles*/
                 if(dateGraph <= today)
                 {
+                    /*Prendre en compte le rent start*/
                     dataRealT.filter((field) => {
                         if (field.rentStartDate !== null) 
                         {
@@ -75,36 +78,42 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
                         }
                         return false
                     }).forEach(loc => {
+                        const date = loc.rentStartDate.date
+                        const newDate = date.replace(' ', 'T')
+                        const rentDate = new Date(newDate)
                         let rentYear = parseFloat((loc.netRentYearPerToken).toFixed(2)*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value)
-                        let price = loc.tokenPrice*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value
-                        rentLoop += rentYear /52
-                        capitalLoop += price 
-                        yieldLoop += loc.annualPercentageYield
+                        if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (dateGraph > rentDate && (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction')) || loc.productType === "loan_income") {
+                            rentLoop += rentYear /52
+                        }
                     })
-                    capitalLoop -= rentLoop
-                    date = `${dateGraph.getDate().toString().padStart(2,"0")}/${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
-                    yieldLoop = yieldLoop/dataRealT.filter((field) => {
+                    dataRealT.filter((field) => {
                         if (field.rentStartDate !== null) 
                         {
                             const rentDate = new Date(field.timeBought)
-                            return dateGraph > rentDate.getTime()
+                            return rentDate.getTime() >= dateGraphBefore.getTime() && rentDate.getTime() <= dateGraph.getTime()
                         }
                         return false
-                    }).length
+                    }).forEach(loc => {
+                        let price = loc.tokenPrice*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value
+                        capitalLoop += price
+                    })
+                    capitalReal += capitalLoop - rentLoop
+                    date = `${dateGraph.getDate().toString().padStart(2,"0")}/${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
                     CumultedRentReal += rentLoop
-                    capitalReinvestReal = capitalLoop + (1+(yieldLoop/100)/52) + rentLoop
+                    capitalReinvestReal += capitalLoop
                     const rentRealObj =
                     {
-                        capital:capitalLoop,
+                        capital:capitalReal,
                         capitalReinvest:capitalReinvestReal,
                         rent:rentLoop,
                         cumulatedRent:CumultedRentReal,
                         date:date
                     }
                     arrayGraph.push(rentRealObj) 
-                    moyenne = capitalLoop
+                    moyenne = capitalReal
                 }
                 dateGraph.setDate(dateGraph.getDate()+7)
+                dateGraphBefore.setDate(dateGraphBefore.getDate()+7)
             }
             moyenne /= weeksMoyenne
             if(investmentWeekReal === 0 && !compoundInterestReal)

@@ -9,7 +9,7 @@ import Map from './pages/Map'
 import Dashboard from './pages/Dashboard'
 import Loyer from './pages/Loyer'
 function Main() {
-    const {data,dataRealT,load,key,setKey,valueRmm,history} = Data()
+    const {data,dataRealT,load,key,setKey,valueRmm,history,rentData} = Data()
     const [openBurger,setOpenBurger] = useState(false)
     const burgerRef = useRef(null)
     const [page,setPage] = useState('Dashboard')
@@ -37,13 +37,13 @@ function Main() {
                         <img src={chart} width={32} alt='chart' />
                         <p>Dashboard</p>
                     </div>
-                    <div className='menu_burger_icons' onClick={()=>onSetPage('Maps')}>
-                        <img src={location_dot} width={32} alt='location_dot' />
-                        <p>Carte</p>
-                    </div>
                     <div className='menu_burger_icons' onClick={()=>onSetPage('Loyer')}>
                         <img src={money} width={32} alt='money' />
                         <p>Loyer</p>
+                    </div>
+                    <div className='menu_burger_icons' onClick={()=>onSetPage('Maps')}>
+                        <img src={location_dot} width={32} alt='location_dot' />
+                        <p>Carte</p>
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@ function Main() {
                     <>
                         {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} setKey={setKey} valueRmm={valueRmm} historyData={history} />)}
                         {page === 'Maps' && (<Map data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} />)}
-                        {page === 'Loyer' && (<Loyer data={data} dataRealT={dataRealT} setKey={setKey} />)}
+                        {page === 'Loyer' && (<Loyer data={data} dataRealT={dataRealT} setKey={setKey} rentData={rentData} />)}
                     </>
                 ):
                 (

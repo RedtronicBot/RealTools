@@ -31,7 +31,7 @@ function InteretComposeAlternate(dataRealT,data,rentData,investmentWeek,monthInv
             capitalReinvest = capital + parseFloat(rentData[rentData.length-1].rentCumulated)
             rent = capitalReinvest*(yieldRent/100)/52
             cumulatedRent = parseFloat(rentData[rentData.length-1].rentCumulated)
-            date = `${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
+            date = `${dateGraph.getDate().toString().padStart(2,"0")}/${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
             const rentObj =
             {
                 capital:capital,
@@ -52,7 +52,7 @@ function InteretComposeAlternate(dataRealT,data,rentData,investmentWeek,monthInv
             for(var j=0;j <parseInt(weeks);j++)
             {
                 dateGraph.setDate(dateGraph.getDate()+7)
-                date = `${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
+                date = `${dateGraph.getDate().toString().padStart(2,"0")}/${(dateGraph.getMonth()+1).toString().padStart(2,"0")}/${dateGraph.getFullYear()}`
                 capital += parseInt(investmentWeek) 
                 capitalReinvest = capitalReinvest * (1+(yieldRent/100)/52) + parseInt(investmentWeek) 
                 cumulatedRent += rent
