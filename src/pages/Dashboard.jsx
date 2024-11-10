@@ -14,6 +14,7 @@ import LineChartRent from '../components/Chart/LineRent'
 import LineChartYield from '../components/Chart/LineYield'
 import LineChartRoi from '../components/Chart/LineRoi'
 import search from '../images/icons/magnifying-glass-solid.svg'
+import LocationDataAlternate from '../function/LocationDataAlternate'
 function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
     const [propertiesType,setPropertiesType] = useState([])
     const [propertiesDiversity,setPropertiesDiversity] = useState([])
@@ -33,13 +34,15 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
     const [contract,setContract] =useState("")
     const expandGraphRef =useRef(null)
     const [openGraph,setOpenGraph] = useState(false)
-    const {token,rent,yieldData,yieldInitial,roi} = LocationData(historyData,dataRealT,contract)
+    const {token,rent,yieldData,yieldInitial,roi,value} = LocationData(historyData,data,dataRealT,contract)
     const [location,setLocation] = useState([])
     const [openGraphSub,setOpenGraphSub] = useState(false)
     const expandGraphSubRef = useRef(null)
     const [expandGraph,setExpandGraph] = useState('')
     const [searchLocation,setSearchLocation] = useState('')
     const searchBarRef = useRef(null)
+    const [stats,setStats] = useState(false)
+    const {tokenAlternate,rentAlternate,yieldDataAlternate,yieldInitialAlternate,roiAlternate} = LocationDataAlternate(historyData,dataRealT,contract)
     useEffect(()=>{
         /*Filtrage des donées pour les graphiques*/
         let arrayPropertiesType = []
@@ -608,23 +611,33 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                     <p>Logement Louées {location.rentedUnits}/{location.totalUnits} ({formatNumber((parseInt(location.rentedUnits)/parseInt(location.totalUnits))*100,2)} %)</p>
                                 </div>
                             </div>
+                            <div className='dashboard_expand_switch'>
+                                <p>Statisique</p>
+                                <div className='loyer_bloc_checkbox'>
+                                    <p>Personnel</p>
+                                    <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
+                                        <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
+                                    </div>
+                                    <p>Global</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className='loyer_expand_graph_sub'>
                         <div className='loyer_expand_graph_components'>
-                            <LineChartToken datachart={token}/>
+                            <LineChartToken datachart={stats?tokenAlternate:token}/>
                             <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('token')} />
                         </div>
                         <div className='loyer_expand_graph_components'>
-                            <LineChartRent datachart={rent} datatoken={token} />
+                            <LineChartRent datachart={stats?rentAlternate:rent} datatoken={stats?tokenAlternate:value} />
                             <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('loyer')} />
                         </div>
                         <div className='loyer_expand_graph_components'>
-                            <LineChartYield datachart={yieldData} datainitial={yieldInitial} />
+                            <LineChartYield datachart={stats?yieldDataAlternate:yieldData} datainitial={stats?yieldInitialAlternate:yieldInitial} />
                             <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('yield')} />
                         </div>
                         <div className='loyer_expand_graph_components'>
-                            <LineChartRoi datachart={roi} />
+                            <LineChartRoi datachart={stats?roiAlternate:roi} />
                             <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('roi')} />
                         </div>
                     </div>
@@ -635,23 +648,71 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                 <div className='loyer_expand_components'>
                     {expandGraph === 'token' ?(
                         <div className='dashboard_expand'>
-                            <h2>Évolution du token</h2>
-                            <LineChartToken datachart={token}/>
+                            <div className='dashboard_expand_switch_bloc'>
+                                <h2>Évolution du token</h2>
+                                <div className='dashboard_expand_switch'>
+                                    <p>Statisique</p>
+                                    <div className='loyer_bloc_checkbox'>
+                                        <p>Personnel</p>
+                                        <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
+                                            <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
+                                        </div>
+                                        <p>Global</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <LineChartToken datachart={stats?tokenAlternate:token}/>
                         </div>
                     ):(expandGraph === 'loyer' ?(
                         <div className='dashboard_expand'>
-                            <h2>Loyer cumulés/Prix d'achat</h2>
-                            <LineChartRent datachart={rent} datatoken={token} />
+                            <div className='dashboard_expand_switch_bloc'>
+                                <h2>Loyer cumulés/Prix d'achat</h2>
+                                <div className='dashboard_expand_switch'>
+                                    <p>Statisique</p>
+                                    <div className='loyer_bloc_checkbox'>
+                                        <p>Personnel</p>
+                                        <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
+                                            <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
+                                        </div>
+                                        <p>Global</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <LineChartRent datachart={stats?rentAlternate:rent} datatoken={stats?tokenAlternate:value} />
                         </div>
                         ):(expandGraph === 'yield' ?(
                             <div className='dashboard_expand'>
-                                <h2>Rendement Actuel/Initial</h2>
-                                <LineChartYield datachart={yieldData} datainitial={yieldInitial} />
+                                <div className='dashboard_expand_switch_bloc'>
+                                    <h2>Rendement Actuel/Initial</h2>
+                                    <div className='dashboard_expand_switch'>
+                                        <p>Statisique</p>
+                                        <div className='loyer_bloc_checkbox'>
+                                            <p>Personnel</p>
+                                            <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
+                                                <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
+                                            </div>
+                                            <p>Global</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <LineChartYield datachart={stats?yieldDataAlternate:yieldData} datainitial={stats?yieldInitialAlternate:yieldInitial} />
                             </div>
                             ):(
                                 <div className='dashboard_expand'>
-                                    <h2>Performance du loyer</h2>
-                                    <LineChartRoi datachart={roi} />
+                                    <div className='dashboard_expand_switch_bloc'>
+                                        <h2>Performance du loyer</h2>
+                                        <div className='dashboard_expand_switch'>
+                                            <p>Statisique</p>
+                                            <div className='loyer_bloc_checkbox'>
+                                                <p>Personnel</p>
+                                                <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
+                                                    <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
+                                                </div>
+                                                <p>Global</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <LineChartRoi datachart={stats?roiAlternate:roi} />
                                 </div>
                             )    
                         )

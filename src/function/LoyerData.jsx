@@ -103,14 +103,13 @@ function ProchainLoyer(data,dataRealT,rondayProperties) {
         }
         dataRealT.filter((field)=>field.rentStartDate !== null).forEach(loc => {
             /*Filtrage des location qui rapporte des loyers*/
-            if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction') || loc.productType === "loan_income")
-            {
-                let rentYear = parseFloat((loc.netRentYearPerToken).toFixed(2)*(data.filter((field) => field.token === loc.gnosisContract.toLowerCase()))[0]?.value)
-                RentObj.rentWeekly += rentYear /52
-                RentObj.rentYearly += rentYear
-                RentObj.rentMonthly += rentYear /12
-                RentObj.rentDaily += (rentYear /52)/7
-            }
+            let rentYear = parseFloat((loc.netRentYearPerToken)*(data.filter((field) => field.token === loc.gnosisContract.toLowerCase()))[0]?.value)
+            let rentMonth = parseFloat((loc.netRentMonthPerToken)*(data.filter((field) => field.token === loc.gnosisContract.toLowerCase()))[0]?.value)
+            let rentDay = parseFloat((loc.netRentDayPerToken)*(data.filter((field) => field.token === loc.gnosisContract.toLowerCase()))[0]?.value)
+            RentObj.rentWeekly += rentYear /52
+            RentObj.rentYearly += rentYear
+            RentObj.rentMonthly += rentMonth
+            RentObj.rentDaily += rentDay
         })
         setRentStat(RentObj)
     },[data,dataRealT,rondayProperties])  

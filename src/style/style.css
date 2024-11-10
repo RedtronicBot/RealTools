@@ -888,6 +888,19 @@ a {
   width: 1518px;
   height: 900px;
 }
+.dashboard_expand_switch {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.dashboard_expand_switch_bloc {
+  width: 100%;
+  padding-right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .chart {
   width: 100%;

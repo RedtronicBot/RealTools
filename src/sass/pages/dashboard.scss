@@ -365,6 +365,21 @@
         width: 1518px;
         height: 900px;    
     }
+    &_expand_switch
+    {
+        display: flex;
+        gap:10px;
+        justify-content: center;
+        align-items: center;
+        &_bloc
+        {
+            width: 100%;
+            padding-right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
 }
 
 .chart

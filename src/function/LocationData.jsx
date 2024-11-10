@@ -1,10 +1,11 @@
 import { useEffect,useState } from 'react'
-function LocationData(historyData,dataRealT,contract) {
+function LocationData(historyData,data,dataRealT,contract) {
     const [token,setToken] = useState([])
     const [rent,setRent] = useState([])
     const [yieldData,setYield] = useState([])
     const [yieldInitial,setYieldInitial] = useState([])
     const [roi,setRoi] = useState([])
+    const [value,setValue] = useState([])
     useEffect(()=>{
         var historyState = historyData.find(obj => obj.uuid.toLowerCase() === contract)
         var dataRealtTFilter = dataRealT.find(loc => loc.gnosisContract.toLowerCase() === contract)
@@ -13,6 +14,7 @@ function LocationData(historyData,dataRealT,contract) {
             const arrayHistoryRent = []
             const arrayRent = []
             const arrayYield = []
+            const arrayValue = []
             let closestIndex = - 1
             let closestDate = null
             const targetDate = new Date(dataRealtTFilter.timeBought)
@@ -52,7 +54,12 @@ function LocationData(historyData,dataRealT,contract) {
                         tokenPrice:historyState.history[i].values.tokenPrice,
                         date:`${dateObject.getDate().toString().padStart(2,"0")}/${(dateObject.getMonth()+1).toString().padStart(2,"0")}/${dateObject.getFullYear()}`
                     }
+                    const ValueObj = {
+                        tokenPrice:historyState.history[i].values.tokenPrice*(data.filter((field) => field.token === contract)[0]?.value),
+                        date:`${dateObject.getDate().toString().padStart(2,"0")}/${(dateObject.getMonth()+1).toString().padStart(2,"0")}/${dateObject.getFullYear()}`
+                    }
                     arrayToken.push(TokenObj)
+                    arrayValue.push(ValueObj)
                 }
                 /*Récupération de l'historique du loyer la location*/
                 if(historyState.history[i].values.netRentYear !== undefined) {
@@ -119,8 +126,8 @@ function LocationData(historyData,dataRealT,contract) {
                         break
                     }
                 }
-                rent += parseFloat(arrayHistoryRent[index].rent)
-                roi = ((rent/arrayToken[0].tokenPrice)*100).toFixed(2)
+                rent += parseFloat(arrayHistoryRent[index].rent)*(data.filter((field) => field.token === contract)[0]?.value)
+                roi = ((rent/(arrayToken[0].tokenPrice*(data.filter((field) => field.token === contract)[0]?.value)))*100).toFixed(2)
                 const rentObj = {
                     rent:parseFloat(rent).toFixed(2),
                     date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
@@ -146,8 +153,14 @@ function LocationData(historyData,dataRealT,contract) {
                 tokenPrice:arrayToken[arrayToken.length-1].tokenPrice,
                 date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
             }
+            const ValueObj = {
+                tokenPrice:arrayToken[arrayToken.length-1].tokenPrice*(data.filter((field) => field.token === contract)[0]?.value),
+                date:`${dateObject.getDate().toString().padStart(2,"0")}/${(dateObject.getMonth()+1).toString().padStart(2,"0")}/${dateObject.getFullYear()}`
+            }
             arrayToken.push(TokenObj)
+            arrayValue.push(ValueObj)
             setToken(arrayToken)
+            setValue(arrayValue)
             const YieldObj = {
                 yield:parseFloat(arrayYield[arrayYield.length-1].yield),
                 date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
@@ -155,7 +168,7 @@ function LocationData(historyData,dataRealT,contract) {
             arrayYield.push(YieldObj)
             setYield(arrayYield)
         }
-    },[contract,historyData,dataRealT])
-    return {token,rent,yieldData,yieldInitial,roi}
+    },[contract,historyData,dataRealT,data])
+    return {token,rent,yieldData,yieldInitial,roi,value}
 }
 export default LocationData

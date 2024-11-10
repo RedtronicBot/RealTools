@@ -23,7 +23,7 @@ function Data() {
 	}
 	/*Récupération du wallet*/
 	useEffect(() => {
-		const keys = JSON.parse(localStorage.getItem('key'))
+		const keys = JSON.parse(localStorage.getItem('key').toLowerCase())
 		if (keys) 
 		{
 			setKey(keys)
@@ -51,6 +51,12 @@ function Data() {
 					}
 					tokenValue = parseFloat(tokenValue.toFixed(4))
 					/*Filtrage et ajout des données */
+					if(token.contractAddress.toLowerCase() === "0xE7F4BFA5B66E5dC1Be1d4d424eaBa414f03A295E".toLowerCase())
+					{
+						var tokenValueTest = Number(token.value)/Number(1000000000000000000n)
+						console.log(token.value)
+						console.log(tokenValueTest)
+					}
 					if(token.tokenName.toLowerCase().startsWith("realtoken") && token.tokenName !== "RealToken Ecosystem Governance")
 					{
 						if (array.length > 0)
@@ -58,7 +64,7 @@ function Data() {
 							const index = array.findIndex(arrays => token.contractAddress === arrays.token)
 							if(index !== -1)
 							{
-								if(token.to !== "0xf71ac0a975b66b90b9d21da72498da748a4d46a3")
+								if(token.to !== key)
 								{
 
 									array[index].value -= tokenValue
@@ -177,7 +183,9 @@ function Data() {
 					dateRent = new Date(parseInt(gnosisData[j].timeStamp)*1000)
 					dateRent.setHours(0, 0, 0, 0)
 					dateRentBefore = new Date(dateRent)
-					dateRentBefore.setDate(dateRentBefore.getDate()-7)
+					const dateRentBeforeDay = dateRentBefore.getDay()
+					const daysBeforeToday = dateRentBeforeDay === 0 ? 6:dateRentBeforeDay - 1
+					dateRentBefore.setDate(dateRentBefore.getDate()-daysBeforeToday)
 					dateRentAfter = new Date(dateRent)
 					dateRentAfter.setDate(dateRentAfter.getDate()+6)
 					dateRentAfter.setHours(23, 59, 59, 999)
@@ -190,16 +198,16 @@ function Data() {
 			today.setDate(today.getDate() - daysBeforeToday)
 			const oneDayInMs = 1000 * 60 * 60 * 24
 			const oneWeekInMs = oneDayInMs * 7
-			const diffInMs = Math.abs(dateRent - today)
+			const diffInMs = Math.abs(dateRentBefore - today)
 			const weeks = diffInMs / oneWeekInMs
 			const arrayGraph = []
 			var rentCumulated = 0
-			for(let k = 0;k < Math.round(weeks+1);k++) {
+			for(let k = 0;k < Math.round(weeks);k++) {
 				const tokenRent = gnosisData.filter((field) => {
 					const dateRentToken = new Date(parseInt(field.timeStamp) * 1000)
-					return dateRentToken >= dateRent && dateRentToken <= dateRentAfter
+					return dateRentToken >= dateRentBefore && dateRentToken <= dateRentAfter
 				})
-				const transaction = internalTransaction.find(loc => dateRent.getDate() === loc.date.getDate() && dateRent.getMonth() === loc.date.getMonth() && dateRent.getFullYear() === loc.date.getFullYear())
+				const transaction = internalTransaction.find(loc => dateRentBefore.getDate() === loc.date.getDate() && dateRentBefore.getMonth() === loc.date.getMonth() && dateRentBefore.getFullYear() === loc.date.getFullYear())
 				const rentNotReinvest = transaction === undefined ? 0 : parseFloat(transaction.value)
 				const rentToken = tokenRent.filter(loc => loc.tokenName.toLowerCase().startsWith("realtoken"))
 				let rentPrice = 0
