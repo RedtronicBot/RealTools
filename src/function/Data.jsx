@@ -23,10 +23,10 @@ function Data() {
 	}
 	/*Récupération du wallet*/
 	useEffect(() => {
-		const keys = JSON.parse(localStorage.getItem('key').toLowerCase())
+		const keys = JSON.parse(localStorage.getItem('key'))
 		if (keys) 
 		{
-			setKey(keys)
+			setKey(keys.toLowerCase())
 		}
 	}, [])
 	/*Récupération Des données */
