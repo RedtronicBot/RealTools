@@ -51,12 +51,6 @@ function Data() {
 					}
 					tokenValue = parseFloat(tokenValue.toFixed(4))
 					/*Filtrage et ajout des données */
-					if(token.contractAddress.toLowerCase() === "0xE7F4BFA5B66E5dC1Be1d4d424eaBa414f03A295E".toLowerCase())
-					{
-						var tokenValueTest = Number(token.value)/Number(1000000000000000000n)
-						console.log(token.value)
-						console.log(tokenValueTest)
-					}
 					if(token.tokenName.toLowerCase().startsWith("realtoken") && token.tokenName !== "RealToken Ecosystem Governance")
 					{
 						if (array.length > 0)
@@ -178,17 +172,20 @@ function Data() {
 			var dateRent
 			var dateRentBefore
 			var dateRentAfter
+			var dateWeekBefore
 			for(let j = 0;j < gnosisData.length;j++) {
 				if(gnosisData[j].tokenName.toLowerCase().startsWith("realtoken") && gnosisData[j].value < Number(1000000000000000000n)) {
 					dateRent = new Date(parseInt(gnosisData[j].timeStamp)*1000)
 					dateRent.setHours(0, 0, 0, 0)
 					dateRentBefore = new Date(dateRent)
 					const dateRentBeforeDay = dateRentBefore.getDay()
-					const daysBeforeToday = dateRentBeforeDay === 0 ? 6:dateRentBeforeDay - 1
-					dateRentBefore.setDate(dateRentBefore.getDate()-daysBeforeToday)
-					dateRentAfter = new Date(dateRent)
+					const daysBeforeToday = (dateRentBeforeDay === 0) ? 1 : (8 - dateRentBeforeDay) % 7
+					dateRentBefore.setDate(dateRentBefore.getDate()+daysBeforeToday)
+					dateRentAfter = new Date(dateRentBefore)
 					dateRentAfter.setDate(dateRentAfter.getDate()+6)
 					dateRentAfter.setHours(23, 59, 59, 999)
+					dateWeekBefore = new Date(dateRentBefore)
+					dateWeekBefore.setDate(dateWeekBefore.getDate()-7)
 					break
 				}	
 			}
@@ -232,10 +229,10 @@ function Data() {
 				{
 					rent:formatNumber(rent,2),
 					rentCumulated:formatNumber(rentCumulated,2),
-					date:`${dateRentBefore.getDate().toString().padStart(2,"0")}/${(dateRentBefore.getMonth()+1).toString().padStart(2,"0")}/${dateRentBefore.getFullYear()}`
+					date:`${dateWeekBefore.getDate().toString().padStart(2,"0")}/${(dateWeekBefore.getMonth()+1).toString().padStart(2,"0")}/${dateWeekBefore.getFullYear()}`
 				}
 				arrayGraph.push(rentGraphObj)
-				dateRent.setDate(dateRent.getDate() + 7)
+				dateWeekBefore.setDate(dateWeekBefore.getDate() + 7)
 				dateRentBefore.setDate(dateRentBefore.getDate() + 7)
 				dateRentAfter.setDate(dateRentAfter.getDate() + 7)
 			}
