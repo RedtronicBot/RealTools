@@ -1,0 +1,134 @@
+.mobile_marker_details
+{
+    display: none;
+    &.open
+    {
+        position: absolute;
+        bottom: 75px;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #2E2E2E;
+        width: 288px;
+        height: 80vh;
+        z-index: 900;
+        border-radius: 20px;
+        color: white;
+    }
+}
+
+.mobile_search_map
+{
+    display: flex;
+    position: relative;
+}
+
+@media screen and (max-width: 768px){
+    .map_carousel_bloc_components
+    {
+        display: flex;
+        justify-content: center;
+        height: 120px;
+        width: 300px;    
+    }
+    .map_carousel_components
+    {
+        display: flex;
+        height: 120px;
+        width: 300px;   
+    }
+
+    .map_marker_details
+    {
+        bottom: -60px;
+        &_components
+        {
+            gap:2px;
+            font-size: 14px;
+            &_name
+            {
+                font-size: 14px;
+            }
+            &_title
+            {
+                font-size: 16px;
+            }
+            &_field
+            {
+                &_title
+                {
+                    font-size: 14px;
+                }
+                &_text
+                {
+                    font-size: 12px;
+                }
+            }
+        }
+        &_img
+        {
+            flex:1 0 auto;
+            height: 120px;
+            width: 300px;
+            object-fit: cover;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;    
+        }
+    }  
+    .map_search
+    {
+        z-index: 20;
+        &_search_bar
+        {
+            width: 55vw;
+            height: 44px;
+            background-color: #2E2E2E;
+            border: 2px solid #70757A; 
+            border-radius: 12px; 
+            font-size: 16px;
+            padding: 5px;  
+            color:#fff;
+        }
+        &_suggestion
+        {
+            width: 80vw;
+            background-color: #2E2E2E;
+            border: 2px solid #70757A; 
+            border-radius: 12px; 
+            margin-top: 3px;   
+            color: #fff;
+        }
+        &_bloc
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap:10px;
+        }
+    }
+    .map_settings
+    {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+        border-radius: 12px;
+        gap: 10px;
+        padding:10px;
+        background-color: #2E2E2E; 
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        cursor: pointer;
+        &_key::after
+        {
+            display: none;
+        }
+    }
+    .map_filter_components::before
+    {
+        right:15px;    
+    }
+}

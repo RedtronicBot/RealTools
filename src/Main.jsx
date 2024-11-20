@@ -47,11 +47,37 @@ function Main() {
                     </div>
                 </div>
             </div>
+            <div className='mobile_main'>
+                <div className='mobile_menu_burger'>
+                    <div className='mobile_menu_burger_icons' onClick={()=>setPage('Dashboard')}>
+                        <img src={chart} width={20} alt='chart' />
+                        <p>Dashboard</p>
+                    </div>
+                    <div className='mobile_menu_burger_icons' onClick={()=>setPage('Loyer')}>
+                        <img src={money} width={20} alt='money' />
+                        <p>Loyer</p>
+                    </div>
+                    <div className='mobile_menu_burger_icons' onClick={()=>setPage('Maps')}>
+                        <img src={location_dot} width={20} alt='location_dot' />
+                        <p>Carte</p>
+                    </div>
+                    <div className='mobile_menu_burger_icons' onClick={()=>setWalletmenu(!walletMenu)}>
+                        <img src={gear_icon} width={20} alt='gear_icon' />
+                        <p>Token</p>
+                    </div>
+                </div>
+                <div className={`mobile_main_key ${walletMenu ? "open":""}`}>
+                    <div className='map_settings_key'>
+                        <input type='text' onChange={(e)=>setKey(e.target.value)} />
+                        <span>Portefeuille</span>
+                    </div>
+                </div>
+            </div>
             {key !== '' ?
                 (dataRealT.length > 0 ?
                 (
                     <>
-                        {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} setKey={setKey} valueRmm={valueRmm} historyData={history} />)}
+                        {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} setKey={setKey} apiKey={key} valueRmm={valueRmm} historyData={history} />)}
                         {page === 'Maps' && (<Map data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} />)}
                         {page === 'Loyer' && (<Loyer data={data} dataRealT={dataRealT} setKey={setKey} rentData={rentData} />)}
                     </>
@@ -80,7 +106,6 @@ function Main() {
                     </div>
                 )
             }
-            
         </div>
     )
 }

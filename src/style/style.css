@@ -21,11 +21,12 @@ a {
 .map {
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: 100%;
 }
 .map_google_maps {
-  flex: 1;
-  position: relative;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }
 .map_marker_details {
   position: absolute;
@@ -52,6 +53,10 @@ a {
   border-top-right-radius: 20px;
 }
 .map_marker_details_bloc {
+  display: none;
+}
+.map_marker_details_bloc.open {
+  display: block;
   background-color: #2E2E2E;
   border-radius: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -191,8 +196,6 @@ a {
   transition: transform 0.5s ease-in-out;
 }
 .map_carousel_bloc_components {
-  justify-content: center;
-  align-items: center;
   width: 300px;
   height: 260px;
   overflow: hidden;
@@ -259,6 +262,7 @@ a {
 }
 .map_filter_components img {
   filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+  cursor: pointer;
 }
 .map_filter_components_radio {
   display: flex;
@@ -651,6 +655,10 @@ a {
   padding: 5px;
   z-index: 5;
 }
+.dashboard_text_stats_img {
+  filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+  cursor: pointer;
+}
 .dashboard_chart {
   position: relative;
   display: flex;
@@ -672,6 +680,10 @@ a {
   cursor: pointer;
   right: 10px;
   bottom: 10px;
+}
+.dashboard_chart_box {
+  width: 750px;
+  height: 450px;
 }
 .dashboard_grid {
   display: flex;
@@ -771,7 +783,8 @@ a {
   justify-content: flex-end;
   align-items: center;
   font-size: 18px;
-  padding: 10px 0;
+  padding: 10px;
+  white-space: nowrap;
 }
 .dashboard_table_th.first {
   justify-content: flex-start;
@@ -782,6 +795,7 @@ a {
   padding: 10px;
   border-top: 1px solid #C9C9C9;
   gap: 10px;
+  white-space: nowrap;
 }
 .dashboard_table_td.first {
   justify-content: flex-start;
@@ -888,6 +902,10 @@ a {
   width: 1518px;
   height: 900px;
 }
+.dashboard_expand_box {
+  width: 1518px;
+  height: 818px;
+}
 .dashboard_expand_switch {
   display: flex;
   gap: 10px;
@@ -900,19 +918,6 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.chart {
-  width: 100%;
-  height: 400px;
-}
-.chart_chart_box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
 }
 
 .loyer {
@@ -1164,6 +1169,348 @@ a {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding-right: 35px;
+}
+
+.mobile_main {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile_main {
+    display: flex;
+    z-index: 10;
+  }
+  .mobile_main_bloc {
+    background-color: #242424;
+  }
+  .mobile_main_key {
+    display: none;
+  }
+  .mobile_main_key.open {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .mobile_menu_burger {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 900;
+    background-color: #2E2E2E;
+    width: 100%;
+  }
+  .mobile_menu_burger_icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+    margin: 10px;
+    cursor: pointer;
+    color: black;
+  }
+  .main_menu_burger {
+    display: none;
+  }
+}
+.mobile_marker_details {
+  display: none;
+}
+.mobile_marker_details.open {
+  position: absolute;
+  bottom: 75px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #2E2E2E;
+  width: 288px;
+  height: 80vh;
+  z-index: 900;
+  border-radius: 20px;
+  color: white;
+}
+
+.mobile_search_map {
+  display: flex;
+  position: relative;
+}
+
+@media screen and (max-width: 768px) {
+  .map_carousel_bloc_components {
+    display: flex;
+    justify-content: center;
+    height: 120px;
+    width: 300px;
+  }
+  .map_carousel_components {
+    display: flex;
+    height: 120px;
+    width: 300px;
+  }
+  .map_marker_details {
+    bottom: -60px;
+  }
+  .map_marker_details_components {
+    gap: 2px;
+    font-size: 14px;
+  }
+  .map_marker_details_components_name {
+    font-size: 14px;
+  }
+  .map_marker_details_components_title {
+    font-size: 16px;
+  }
+  .map_marker_details_components_field_title {
+    font-size: 14px;
+  }
+  .map_marker_details_components_field_text {
+    font-size: 12px;
+  }
+  .map_marker_details_img {
+    flex: 1 0 auto;
+    height: 120px;
+    width: 300px;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  .map_search {
+    z-index: 20;
+  }
+  .map_search_search_bar {
+    width: 55vw;
+    height: 44px;
+    background-color: #2E2E2E;
+    border: 2px solid #70757A;
+    border-radius: 12px;
+    font-size: 16px;
+    padding: 5px;
+    color: #fff;
+  }
+  .map_search_suggestion {
+    width: 80vw;
+    background-color: #2E2E2E;
+    border: 2px solid #70757A;
+    border-radius: 12px;
+    margin-top: 3px;
+    color: #fff;
+  }
+  .map_search_bloc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  .map_settings {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    border-radius: 12px;
+    gap: 10px;
+    padding: 10px;
+    background-color: #2E2E2E;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+  }
+  .map_settings_key::after {
+    display: none;
+  }
+  .map_filter_components::before {
+    right: 15px;
+  }
+}
+.carousel_graph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.carousel_graph_bloc_components {
+  display: flex;
+  height: 350px;
+  width: 85vw;
+  overflow: hidden;
+}
+.carousel_graph_components {
+  display: flex;
+  height: 350px;
+  width: 85vw;
+  transition: transform 0.5s ease-in-out;
+}
+
+.mobile_table {
+  display: flex;
+  width: 100%;
+  overflow: scroll;
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard_bloc_select {
+    padding: 0 10px;
+  }
+  .dashboard_bloc_select_component select {
+    font-size: 16px;
+  }
+  .dashboard_grid {
+    width: 98vw;
+    max-width: 450px;
+  }
+  .dashboard_grid_img {
+    width: 98vw;
+    max-width: 450px;
+  }
+  .dashboard_bloc_pagination {
+    margin-bottom: 75px;
+  }
+  .dashboard_settings {
+    display: none;
+  }
+  .dashboard_chart {
+    width: 95vw;
+  }
+  .dashboard_chart_img {
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  .loyer_chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 12px;
+    border: 1px solid #70757A;
+    background-color: #2E2E2E;
+    color: #fff;
+    width: 95vw;
+    height: 500px;
+    padding: 10px;
+  }
+  .loyer_chart_input_bloc {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    align-items: flex-start;
+    width: 100%;
+  }
+  .loyer_chart_input_bloc_components {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+  .loyer_chart_input {
+    border: 1px solid #70757A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    border-radius: 5px;
+    padding: 5px 10px;
+  }
+  .loyer_chart_input p {
+    font-size: 12px;
+  }
+  .loyer_chart_input_components {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .loyer_chart_input_components p {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .loyer_chart_input_components input {
+    background-color: #2E2E2E;
+    border: none;
+    color: #fff;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px 5px;
+    width: 200px;
+  }
+  .loyer_chart_input input {
+    background-color: #2E2E2E;
+    border: none;
+    color: #fff;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px 5px;
+    width: 200px;
+  }
+  .loyer_chart input {
+    background-color: #2E2E2E;
+    border: none;
+    color: #fff;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px 5px;
+    width: 200px;
+  }
+  .loyer_expand_graph {
+    width: 90vw;
+    height: 95vh;
+  }
+  .loyer_expand_graph_components {
+    width: 90vw;
+    height: 150px;
+  }
+  .loyer_expand_description {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .loyer_expand_description_sub {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .loyer_expand_description_sub h3 {
+    font-size: 18px;
+  }
+  .loyer_expand_description_sub p {
+    font-size: 12px;
+  }
+  .loyer_expand_description_paragraph_bloc {
+    display: flex;
+    gap: 10px;
+  }
+  .loyer_expand_description_paragraph {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .loyer_expand_img {
+    display: none;
+  }
+  .loyer_graph_interet {
+    position: relative;
+    width: 95vw;
+    height: 460px;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

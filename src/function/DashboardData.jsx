@@ -200,17 +200,39 @@ function DashboardData(data,dataRealT,valueRmm,historyData,rondayProperties) {
         const FilteredData = dataRealT.filter((field) => {
             if (field.rentStartDate !== null) {
                 const dateFrist = new Date()
-                const date = field.rentStartDate.date
-                const newDate = date.replace(' ', 'T')
-                const rentDate = new Date(newDate)
-                return dateFrist > rentDate.getTime()
+                const rentDate = new Date(field.rentStartDate.date)
+                return dateFrist >= rentDate.getTime() && dateFrist >= field.timeBought
             }
             return false
         })
         FilteredData.forEach(loc => {
-            YieldObj.yieldActual += loc.annualPercentageYield
+            var history = historyData.find(obj => obj.uuid.toLowerCase() === loc.gnosisContract.toLowerCase())
+            let closestIndex = - 1
+            let closestDate = null
+            const today = new Date()
+            history.history.forEach((field,index) => {
+                const dateFirst = field.date
+                let annee = parseInt(dateFirst.substring(0, 4))
+                let mois = parseInt(dateFirst.substring(4, 6)) - 1
+                let jour = parseInt(dateFirst.substring(6, 8))
+                const currentDate = new Date(annee, mois, jour)
+                if (currentDate <= today) {
+                    const diff = Math.abs(currentDate - today)
+                    if (!closestDate || diff < Math.abs(closestDate - today)) {
+                        closestDate = currentDate
+                        closestIndex = index
+                    }
+                }
+            })
+            if(history.history[closestIndex].values.netRentYear === undefined || loc.rentalType === 'pre_construction') {
+                                
+                YieldObj.yieldActual += (history.history[0].values.netRentYear/history.history[0].values.totalInvestment)*100
+            }
+            else {
+                YieldObj.yieldActual += (history.history[closestIndex].values.netRentYear/history.history[0].values.totalInvestment)*100
+            }
         })
-        YieldObj.yieldActual = YieldObj.yieldActual/FilteredData.length
+        YieldObj.yieldActual = FilteredData.length === 0 ?0:YieldObj.yieldActual/FilteredData.length
         setYieldStat(YieldObj)
     },[dataRealT,data,valueRmm,rondayProperties,historyData])
     

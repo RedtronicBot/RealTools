@@ -80,9 +80,12 @@ function LocationDataAlternate(historyData,dataRealT,contract) {
             let index = 0
             let rent = 0
             let roi = 0
-            for(var j = 0; j < Math.round(weeks);j++) {
+            const dateObjectRentCopy = new Date(dateObjectRent)
+            dateObjectRentCopy.setDate(dateObjectRentCopy.getDate()-7)
+            for(var j = 0; j <= Math.round(weeks);j++) {
+                dateObjectRentCopy.setDate(dateObjectRentCopy.getDate()+7)
                 for (let k = 0; k < arrayHistoryRent.length; k++) {
-                    if (dateObjectRent >= arrayHistoryRent[k].date) {
+                    if (dateObjectRentCopy >= arrayHistoryRent[k].date) {
                         index = k
                     } else {
                         break
@@ -92,34 +95,28 @@ function LocationDataAlternate(historyData,dataRealT,contract) {
                 roi = ((rent/arrayToken[0].tokenPrice)*100).toFixed(2)
                 const rentObj = {
                     rent:parseFloat(rent).toFixed(2),
-                    date:`${dateObjectRent.getDate().toString().padStart(2,"0")}/${(dateObjectRent.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRent.getFullYear()}`
+                    date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
                 }
                 arrayRent.push(rentObj)
-                const TokenObj = {
-                    tokenPrice:arrayToken[arrayToken.length-1].tokenPrice,
-                    date:`${dateObjectRent.getDate().toString().padStart(2,"0")}/${(dateObjectRent.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRent.getFullYear()}`
-                }
-                arrayToken.push(TokenObj)
                 const RoiObj = {
                     roi:roi,
-                    date:`${dateObjectRent.getDate().toString().padStart(2,"0")}/${(dateObjectRent.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRent.getFullYear()}`
+                    date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
                 }
                 arrayRoi.push(RoiObj)
-                dateObjectRent.setDate(dateObjectRent.getDate()+7)
+                
             }
             setRoi(arrayRoi)
             setRent(arrayRent)
             /*Rajout point date aujourd'hui pour avoir une ligne*/
-            arrayToken.pop()
             const TokenObj = {
                 tokenPrice:arrayToken[arrayToken.length-1].tokenPrice,
-                date:`${dateObjectRent.getDate().toString().padStart(2,"0")}/${(dateObjectRent.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRent.getFullYear()}`
+                date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             arrayToken.push(TokenObj)
             setToken(arrayToken)
             const YieldObj = {
                 yield:parseFloat(arrayYield[arrayYield.length-1].yield),
-                date:`${dateObjectRent.getDate().toString().padStart(2,"0")}/${(dateObjectRent.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRent.getFullYear()}`
+                date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             arrayYield.push(YieldObj)
             setYield(arrayYield)

@@ -115,11 +115,7 @@ function PieChart({datachart,dataLength})
         }
     }
     return (
-        <div className='chart_chart_box'>
-            <div className='chart'>
-                <Pie data={data} options={options} />
-            </div>
-        </div>
+        <Pie data={data} options={options} />
     )
 }
 

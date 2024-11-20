@@ -2,11 +2,12 @@
 {
     display: flex;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     &_google_maps
     {
-        flex: 1;
-        position: relative;
+        position: fixed;
+        width: 100%;
+        height: 100%;
     }
     &_marker_details
     {
@@ -36,6 +37,11 @@
         }
         &_bloc
         {
+            display: none;
+        }
+        &_bloc.open
+        {
+            display: block;
             background-color: #2E2E2E;
             border-radius: 20px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -196,8 +202,6 @@
         }
         &_bloc_components
         {
-            justify-content: center;
-            align-items: center;
             width: 300px;
             height: 260px;
             overflow: hidden;   
@@ -271,7 +275,8 @@
         color: #fff;
         & img
         {
-            filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);    
+            filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+            cursor: pointer;    
         }
         &_radio
         {

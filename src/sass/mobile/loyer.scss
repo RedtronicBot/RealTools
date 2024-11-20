@@ -1,0 +1,155 @@
+@media screen and (max-width: 768px){
+    .loyer
+    {
+        &_chart
+        {
+            display: flex;
+            flex-direction: column;
+            gap:10px;
+            justify-content: flex-start;
+            align-items: center;
+            border-radius: 12px;
+            border:1px solid #70757A;
+            background-color: #2E2E2E;
+            color: #fff;
+            width: 95vw;
+            height: 500px;
+            padding: 10px; 
+            &_input_bloc
+            {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+                align-items: flex-start;
+                width: 100%;
+                &_components
+                {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    justify-content: center;
+                    gap:10px;
+                }
+            }
+            &_input
+            {
+                border: 1px solid #70757A;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                border-radius: 5px;
+                padding: 5px 10px;
+                & p
+                {
+                    font-size: 12px;
+                }
+                &_components
+                {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    & p
+                    {
+                        font-size: 14px;
+                        font-weight: bold;
+                    }
+                    & input
+                    {
+                        background-color: #2E2E2E;
+                        border: none;
+                        color: #fff;
+                        font-family: 'Roboto',sans-serif;
+                        font-size: 16px;
+                        font-weight: bold;
+                        border-radius: 5px;
+                        padding:5px 5px; 
+                        width: 200px;   
+                    }
+                }
+                & input
+                {
+                    background-color: #2E2E2E;
+                    border: none;
+                    color: #fff;
+                    font-family: 'Roboto',sans-serif;
+                    font-size: 16px;
+                    font-weight: bold;
+                    border-radius: 5px;
+                    padding:5px 5px; 
+                    width: 200px;   
+                }
+            }
+            & input
+            {
+                background-color: #2E2E2E;
+                border: none;
+                color: #fff;
+                font-family: 'Roboto',sans-serif;
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 5px;
+                padding:5px 5px; 
+                width: 200px;   
+            }   
+        }
+        &_expand
+        {
+            &_graph
+            {
+                width: 90vw;
+                height: 95vh;
+                &_components
+                {
+                    width: 90vw;
+                    height: 150px;
+                }
+            }
+            &_description
+            {
+                display: flex;
+                flex-direction: column;
+                gap:10px;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                &_sub
+                {
+                    display: flex;
+                    flex-direction: column;
+                    gap:10px;
+                    & h3
+                    {
+                        font-size: 18px;
+                    }
+                    & p 
+                    {
+                        font-size: 12px;
+                    }
+                }
+                &_paragraph_bloc
+                {
+                    display: flex;
+                    gap:10px;
+                }
+                &_paragraph
+                {
+                    display: flex;
+                    flex-direction: column;
+                    gap:10px;
+                }
+            }
+            &_img
+            {
+                display: none;
+            }
+        } 
+        &_graph_interet
+        {
+            position: relative;
+            width: 95vw;
+            height: 460px;
+        }
+    }
+}

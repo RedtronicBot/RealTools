@@ -1,0 +1,21 @@
+.carousel_graph
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    &_bloc_components
+    {
+        display: flex;
+        height:350px;
+        width:85vw;
+        overflow: hidden;     
+    }
+    &_components
+    {
+        display: flex;
+        height:350px;
+        width:85vw;
+        transition: transform 0.5s ease-in-out;
+    }
+}

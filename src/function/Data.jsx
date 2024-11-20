@@ -195,7 +195,7 @@ function Data() {
 			today.setDate(today.getDate() - daysBeforeToday)
 			const oneDayInMs = 1000 * 60 * 60 * 24
 			const oneWeekInMs = oneDayInMs * 7
-			const diffInMs = Math.abs(dateRentBefore - today)
+			const diffInMs = Math.abs(dateWeekBefore - today)
 			const weeks = diffInMs / oneWeekInMs
 			const arrayGraph = []
 			var rentCumulated = 0
@@ -214,7 +214,7 @@ function Data() {
 						const data = dataRealT.find(loc => loc.gnosisContract.toLowerCase() === tokens.contractAddress.toLowerCase())
 						const value = parseInt(tokens.value) / Number(1000000000000000000n)
 						if(tokens.tokenName !== 'RealToken RWA Holdings SA, Neuchatel, NE, Suisse') {
-							if(!Number.isInteger(value) && tokens.contractAddress !== '0x108f15a6cac5bddf919af07928faa0b7168feff8')
+							if(!Number.isInteger(value) && tokens.contractAddress !== '0x108f15a6cac5bddf919af07928faa0b7168feff8' && data !== undefined)
 							{
 								rentPrice += parseFloat(data.tokenPrice)*value
 							}

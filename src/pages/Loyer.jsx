@@ -1,5 +1,5 @@
 import React, { useEffect,useRef,useState } from 'react'
-import gear_icon from '../images/icons/gear-solid.svg'
+/*Fonctions*/
 import LineChart from '../components/Chart/Line'
 import InteretCompose from '../components/Chart/InteretCompose'
 import InteretComposeReel from '../components/Chart/InteretComposeReel'
@@ -8,8 +8,11 @@ import InteretComposeData from '../function/InteretComposeData'
 import InteretRealData from '../function/InteretRealData'
 import InteretRealAlternateData from '../function/InteretRealAlternateData'
 import InteretComposeAlternateData from '../function/InteretComposeAlternateData'
+/*Icones*/
+import gear_icon from '../images/icons/gear-solid.svg'
 import maximize from '../images/icons/maximize-solid.svg'
 import cross from '../images/icons/x-solid.svg'
+import info from '../images/icons/info-solid.svg'
 function Loyer({data,dataRealT,setKey,rentData}) {
     const [rondayProperties,setRondayProperties] =useState('week')
     const [walletMenu,setWalletmenu] = useState(false)
@@ -28,7 +31,6 @@ function Loyer({data,dataRealT,setKey,rentData}) {
     const {interestDataAlternate} = InteretComposeAlternateData(dataRealT,data,rentData,investmentWeek,monthInvestment)
     const {interestDataProj,realData} = InteretRealData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef,compoundInterestReal,investmentRefExpand,open,expand)
     const {interestDataProjAlternate,realDataAlternate} = InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,monthInvestmentReal,setInvestmentWeekReal,investmentRef,compoundInterestReal,investmentRefExpand,open,expand)
-    
     const expandRef = useRef(null)
     /*Formatage des nombres à virgules*/
     function formatNumber(number, decimals) 
@@ -158,6 +160,10 @@ function Loyer({data,dataRealT,setKey,rentData}) {
                                     <div className={`loyer_checkbox_components ${compoundInterest ?"true":"false"}`}></div>
                                 </div>
                                 <p>En cours</p>
+                                <div className='dashboard_text_stats_info_border'>
+                                    <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                    <span>Total: Intérêt de l'investisement total<br/>En cours: Intérêt calculé en tenant compte du fait que le logement est loué</span>
+                                </div>
                             </div>
                         </div>
                         <div className='loyer_chart_input_bloc_components'>
@@ -189,6 +195,10 @@ function Loyer({data,dataRealT,setKey,rentData}) {
                                     <div className={`loyer_checkbox_components ${compoundInterestReal ?"true":"false"}`}></div>
                                 </div>
                                 <p>En cours</p>
+                                <div className='dashboard_text_stats_info_border'>
+                                    <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                    <span>Total: Intérêt de l'investisement total<br/>En cours: Intérêt calculé en tenant compte du fait que le logement est loué</span>
+                                </div>
                             </div>
                         </div>
                         <div className='loyer_chart_input_bloc_components'>
@@ -226,6 +236,10 @@ function Loyer({data,dataRealT,setKey,rentData}) {
                                             <div className={`loyer_checkbox_components ${compoundInterest ?"true":"false"}`}></div>
                                         </div>
                                         <p>En cours</p>
+                                        <div className='dashboard_text_stats_info_border'>
+                                            <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                            <span>Total: Intérêt de l'investisement total<br/>En cours: Intérêt calculé en tenant compte du fait que le logement est loué</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className='loyer_chart_input_bloc_components'>
@@ -257,6 +271,10 @@ function Loyer({data,dataRealT,setKey,rentData}) {
                                             <div className={`loyer_checkbox_components ${compoundInterestReal ?"true":"false"}`}></div>
                                         </div>
                                         <p>En cours</p>
+                                        <div className='dashboard_text_stats_info_border'>
+                                            <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                            <span>Total: Intérêt de l'investisement total<br/>En cours: Intérêt calculé en tenant compte du fait que le logement est loué</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className='loyer_chart_input_bloc_components'>
@@ -274,7 +292,7 @@ function Loyer({data,dataRealT,setKey,rentData}) {
                                 </div>
                             </div>
                             <div className='loyer_expand_chart'>
-                                <InteretComposeReel datachart={compoundInterestReal?interestDataProj:interestDataProjAlternate} datareal={compoundInterestReal?realData:realDataAlternate}/>
+                                <InteretComposeReel datachart={compoundInterestReal?interestDataProj:interestDataProjAlternate} datareal={compoundInterestReal?realData:realDataAlternate} dataloyer={rentData} />
                             </div>
                         </div>
                     ))}

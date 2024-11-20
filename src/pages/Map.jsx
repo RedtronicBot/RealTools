@@ -1,10 +1,10 @@
 
 import { useState,useEffect,useRef } from 'react'
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
 import '../style/style.css'
-import L from 'leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
+import L from 'leaflet'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import Carousel from '../components/Carousel'
 /*Icones */
 import red_marker from '../images/icons/red_marker.png'
@@ -22,6 +22,19 @@ import portfolio from '../images/marker/portfolio.png'
 import building from '../images/marker/building-solid.svg'
 import quadplex from '../images/marker/quadplex.png'
 import commercial from '../images/marker/store-solid.svg'
+/*Fonction qui regarde la taille de l'écran*/
+function useScreenSize() {
+	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 768)
+		window.addEventListener('resize', handleResize)
+		return () => window.removeEventListener('resize', handleResize)
+	}, [])
+
+	return isMobile
+}
+
 function Map({data,dataRealT,apiKey,setKey}) {
 	const [selectedLocation, setSelectedLocation] = useState(null)
 	const [indexLocation,setIndexLocation] = useState(0)
@@ -45,6 +58,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 	const [propertyType,setPropertyType] = useState(null)
 	const [propertiesType,setPropertiesType] = useState([])
 	const selectRef = useRef(null)
+	const isMobile = useScreenSize()
 	const handleIndex = (index) =>{
 		setIndexLocation(index)
 	}
@@ -215,16 +229,6 @@ function Map({data,dataRealT,apiKey,setKey}) {
 			return number.toFixed(decimals)
 		}
 	}
-	/*Animation du Détail du marqueur à l'ouverture/fermeture */
-	useEffect(()=>{
-		const positionInfo = markerDetailsRef.current.getBoundingClientRect()
-		if(open)
-		{
-			markerDetailsRef.current.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.1)'
-		}
-		open ? markerDetailsRef.current.style.transform = `translateX(0px)`: markerDetailsRef.current.style.transform = `translateX(${positionInfo.width+10}px)`	
-	},[open])
-
 	const onSetKey = (key) =>
 	{
 		setKey(key)
@@ -389,13 +393,13 @@ function Map({data,dataRealT,apiKey,setKey}) {
         })
         setPropertiesType(arrayPropertiesType)
     },[dataRealT])
+
     return (
 		<div className='map'>
 			<div className='map_google_maps'>
 				<MapContainer center={[18.808779, -52.150144]} zoom={3} className='map' zoomControl={false} ref={mapRef}>
 					<TileLayer
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-						attribution="&copy; OpenStreetMap contributors"
 					/>
 					<MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
 						{houseNumber.map((location,index) => (
@@ -412,39 +416,70 @@ function Map({data,dataRealT,apiKey,setKey}) {
 					</MarkerClusterGroup>
 				</MapContainer>
 			</div>
-			<div className='map_search'>
-				<div className='map_search_bloc'>
-					<input className='map_search_search_bar' onChange={(e)=>FilteredAdress(e.target.value)} ref={searchBarRef} />
-					<div className='map_search_icons'>
-						{searchBarRef.current && searchBarRef.current.value === '' ?
-							(<img src={search} alt='search' height={20} />):
-							(<img src={cross} alt='cross' height={20} onClick={()=>ResetSearch()} />)
+			{isMobile ?(
+					<div className='map_search'>
+						<div className='map_search_bloc'>
+							<div className='map_settings'>
+								<p>{houseNumber.length}</p>
+								<img src={house} alt='house' height={20} className='icon' />
+							</div>
+							<div className='mobile_search_map'>
+								<input className='map_search_search_bar' onChange={(e)=>FilteredAdress(e.target.value)} ref={searchBarRef} />
+								<div className='map_search_icons'>
+									{searchBarRef.current && searchBarRef.current.value === '' ?
+										(<img src={search} alt='search' height={20} />):
+										(<img src={cross} alt='cross' height={20} onClick={()=>ResetSearch()} />)
+									}
+								</div>
+							</div>
+							<div className='map_settings' ref={settingsRef}>
+								<img src={filter_icon} alt='filter' width={24} height={20} className='icon' onClick={()=>onSetFilter()}/>
+							</div>
+						</div>
+						{filteredAdresses.length > 0 &&
+							<div className='map_search_suggestion'>
+								{filteredAdresses.map((address,index)=>(<p className='map_search_text' onClick={()=>zoomToCoordinate(address.name,address.lat,address.lng)} key={index}>{address.name}</p>))}
+							</div>
 						}
 					</div>
-				</div>
-				{filteredAdresses.length > 0 &&
-					<div className='map_search_suggestion'>
-						{filteredAdresses.map((address,index)=>(<p className='map_search_text' onClick={()=>zoomToCoordinate(address.name,address.lat,address.lng)} key={index}>{address.name}</p>))}
+				):(
+					<div className='map_search'>
+						<div className='map_search_bloc'>
+							<input className='map_search_search_bar' onChange={(e)=>FilteredAdress(e.target.value)} ref={searchBarRef} />
+							<div className='map_search_icons'>
+								{searchBarRef.current && searchBarRef.current.value === '' ?
+									(<img src={search} alt='search' height={20} />):
+									(<img src={cross} alt='cross' height={20} onClick={()=>ResetSearch()} />)
+								}
+							</div>
+						</div>
+						{filteredAdresses.length > 0 &&
+							<div className='map_search_suggestion'>
+								{filteredAdresses.map((address,index)=>(<p className='map_search_text' onClick={()=>zoomToCoordinate(address.name,address.lat,address.lng)} key={index}>{address.name}</p>))}
+							</div>
+						}
 					</div>
-				}
-			</div>
+				)
+			}
 			<div className='map_marker_details'>
-				<div className='map_marker_details_bloc_settings'>
-					<div className='map_settings'>
-						<p>{houseNumber.length}</p>
-						<img src={house} alt='house' height={24} className='icon' />
-					</div>
-					<div className='map_settings' ref={settingsRef}>
-						<img src={filter_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>onSetFilter()}/>
-						<img src={gear_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>onSetWallet()} />
-					</div>
-					<div className={`map_settings_bloc_key ${walletMenu ? "open":""}`} ref={walletRef}>
-						<div className='map_settings_key'>
-							<input type='text' onChange={(e)=>onSetKey(e.target.value)} />
-							<span>Portefeuille</span>
+				{!isMobile &&
+					<div className='map_marker_details_bloc_settings'>
+						<div className='map_settings'>
+							<p>{houseNumber.length}</p>
+							<img src={house} alt='house' height={24} className='icon' />
+						</div>
+						<div className='map_settings' ref={settingsRef}>
+							<img src={filter_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>onSetFilter()}/>
+							<img src={gear_icon} alt='filter' width={24} height={24} className='icon' onClick={()=>onSetWallet()} />
+						</div>
+						<div className={`map_settings_bloc_key ${walletMenu ? "open":""}`} ref={walletRef}>
+							<div className='map_settings_key'>
+								<input type='text' onChange={(e)=>onSetKey(e.target.value)} />
+								<span>Portefeuille</span>
+							</div>
 						</div>
 					</div>
-				</div>
+				}
 				<div className={`map_filter ${filter ? "open":""}`} ref={filterRef}>
 					<div className='map_filter_components'>
 						<p className='map_filter_components_title'>Logement loués</p>
@@ -514,7 +549,7 @@ function Map({data,dataRealT,apiKey,setKey}) {
 						<img src={refresh} alt='refresh' height={24} onClick={()=>setReload()}/>
 					</div>
 				</div>
-				<div className='map_marker_details_bloc' ref={markerDetailsRef}>
+				<div className={`map_marker_details_bloc ${open ?"open":""}`} ref={markerDetailsRef}>
 				{selectedLocation && (
 					<div className='map_marker_details_components'>
 						<div className='map_carousel_close' onClick={()=>ResetSearch()}><img src={cross} alt='chevron' height={14} /></div>

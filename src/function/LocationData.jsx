@@ -24,11 +24,13 @@ function LocationData(historyData,data,dataRealT,contract) {
                 let mois = parseInt(dateFirst.substring(4, 6)) - 1
                 let jour = parseInt(dateFirst.substring(6, 8))
                 const currentDate = new Date(annee, mois, jour)
-                const diff = Math.abs(currentDate - targetDate)
+                if (currentDate <= targetDate) {
+                    const diff = Math.abs(currentDate - targetDate)
 
-                if (!closestDate || diff < Math.abs(closestDate - targetDate)) {
-                    closestDate = currentDate
-                    closestIndex = index
+                    if (!closestDate || diff < Math.abs(closestDate - targetDate)) {
+                        closestDate = currentDate
+                        closestIndex = index
+                    }
                 }
             })
             const dateObject = new Date(dataRealtTFilter.timeBought)
@@ -118,9 +120,12 @@ function LocationData(historyData,data,dataRealT,contract) {
             let rent = 0
             let roi = 0
             const arrayRoi = []
-            for(var j = 0; j < Math.round(weeks);j++) {
+            const dateObjectRentCopy = new Date(date)
+            dateObjectRentCopy.setDate(dateObjectRentCopy.getDate()-7)
+            for(var j = 0; j <= Math.round(weeks);j++) {
+                dateObjectRentCopy.setDate(dateObjectRentCopy.getDate()+7)
                 for (let k = 0; k < arrayHistoryRent.length; k++) {
-                    if (date >= arrayHistoryRent[k].date) {
+                    if (dateObjectRentCopy >= arrayHistoryRent[k].date) {
                         index = k
                     } else {
                         break
@@ -130,32 +135,25 @@ function LocationData(historyData,data,dataRealT,contract) {
                 roi = ((rent/(arrayToken[0].tokenPrice*(data.filter((field) => field.token === contract)[0]?.value)))*100).toFixed(2)
                 const rentObj = {
                     rent:parseFloat(rent).toFixed(2),
-                    date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
+                    date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
                 }
                 arrayRent.push(rentObj)
-                const TokenObj = {
-                    tokenPrice:arrayToken[arrayToken.length-1].tokenPrice,
-                    date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
-                }
-                arrayToken.push(TokenObj)
                 const RoiObj = {
                     roi:roi,
-                    date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
+                    date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
                 }
                 arrayRoi.push(RoiObj)
-                date.setDate(date.getDate()+7)
             }
             setRoi(arrayRoi)
             setRent(arrayRent)
             /*Rajout point date aujourd'hui pour avoir une ligne*/
-            arrayToken.pop()
             const TokenObj = {
                 tokenPrice:arrayToken[arrayToken.length-1].tokenPrice,
-                date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
+                date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             const ValueObj = {
                 tokenPrice:arrayToken[arrayToken.length-1].tokenPrice*(data.filter((field) => field.token === contract)[0]?.value),
-                date:`${dateObject.getDate().toString().padStart(2,"0")}/${(dateObject.getMonth()+1).toString().padStart(2,"0")}/${dateObject.getFullYear()}`
+                date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             arrayToken.push(TokenObj)
             arrayValue.push(ValueObj)
@@ -163,7 +161,7 @@ function LocationData(historyData,data,dataRealT,contract) {
             setValue(arrayValue)
             const YieldObj = {
                 yield:parseFloat(arrayYield[arrayYield.length-1].yield),
-                date:`${date.getDate().toString().padStart(2,"0")}/${(date.getMonth()+1).toString().padStart(2,"0")}/${date.getFullYear()}`
+                date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             arrayYield.push(YieldObj)
             setYield(arrayYield)

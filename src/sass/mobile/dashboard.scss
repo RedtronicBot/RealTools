@@ -1,0 +1,41 @@
+.mobile_table
+{
+    display: flex;
+    width: 100%;
+    overflow: scroll;
+}
+@media screen and (max-width: 768px){
+    .dashboard_bloc_select
+    {
+        padding: 0 10px;
+        &_component select
+        {
+            font-size: 16px;
+        }
+    }
+    .dashboard_grid
+    {
+        width: 98vw;
+        max-width: 450px;
+        &_img
+        {
+            width: 98vw;
+            max-width: 450px;
+        }
+    }
+    .dashboard_bloc_pagination
+    {
+        margin-bottom: 75px;
+    }
+    .dashboard_settings
+    {
+        display: none;
+    }
+    .dashboard_chart{
+        width: 95vw;
+        &_img
+        {
+            display: none;
+        }
+    }
+}

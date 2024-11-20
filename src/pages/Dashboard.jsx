@@ -1,21 +1,42 @@
 import React, { useRef,useEffect, useState } from 'react'
-import PieChart from '../components/Chart//Pie'
-import info from '../images/icons/info-solid.svg'
+/*Fonctions*/
+import PieChart from '../components/Chart/Pie'
 import Table from "../components/Table/Table"
-import chevron from '../images/icons/chevron.svg'
-import gear_icon from '../images/icons/gear-solid.svg'
 import DashboardData from '../function/DashboardData'
-import maximize from '../images/icons/maximize-solid.svg'
-import cross from '../images/icons/x-solid.svg'
-import chart from '../images/icons/chart-line-solid.svg'
 import LineChartToken from '../components/Chart/LineToken'
 import LocationData from '../function/LocationData'
 import LineChartRent from '../components/Chart/LineRent'
 import LineChartYield from '../components/Chart/LineYield'
 import LineChartRoi from '../components/Chart/LineRoi'
-import search from '../images/icons/magnifying-glass-solid.svg'
 import LocationDataAlternate from '../function/LocationDataAlternate'
-function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
+import CarouselGraph from '../components/CarouselGraph'
+import InvestissementMensuel from '../function/InvestissementMensuel'
+import BarInvestissementMensuel from '../components/Chart/BarInvestissementMensuel'
+import EvolutionYield from '../function/EvolutionYield'
+import LineEvolutionYield from '../components/Chart/LineEvolutionYield'
+/*Icones*/
+import info from '../images/icons/info-solid.svg'
+import chevron from '../images/icons/chevron.svg'
+import gear_icon from '../images/icons/gear-solid.svg'
+import maximize from '../images/icons/maximize-solid.svg'
+import cross from '../images/icons/x-solid.svg'
+import chart from '../images/icons/chart-line-solid.svg'
+import search from '../images/icons/magnifying-glass-solid.svg'
+
+/*Fonction qui regarde la taille de l'écran*/
+function useScreenSize() {
+	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+	useEffect(() => {
+		const handleResize = () => setIsMobile(window.innerWidth < 768)
+		window.addEventListener('resize', handleResize)
+		return () => window.removeEventListener('resize', handleResize)
+	}, [])
+
+	return isMobile
+}
+
+function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
     const [propertiesType,setPropertiesType] = useState([])
     const [propertiesDiversity,setPropertiesDiversity] = useState([])
     const [rondayProperties,setRondayProperties] =useState('week')
@@ -43,6 +64,12 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
     const searchBarRef = useRef(null)
     const [stats,setStats] = useState(false)
     const {tokenAlternate,rentAlternate,yieldDataAlternate,yieldInitialAlternate,roiAlternate} = LocationDataAlternate(historyData,dataRealT,contract)
+    const isMobile = useScreenSize()
+    const [statsExpand,setStatsExpand] = useState(false)
+    const [statsValue,setStatsValue] = useState('')
+    const expandStatsRef = useRef(null)
+    const {investment} = InvestissementMensuel(historyData,data,dataRealT,apiKey)
+    const {yieldChart} = EvolutionYield(historyData,dataRealT)
     useEffect(()=>{
         /*Filtrage des donées pour les graphiques*/
         let arrayPropertiesType = []
@@ -216,10 +243,17 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
             document.body.style.overflow = 'auto'
         }
 
+        if (statsExpand) {
+            document.body.style.overflow = 'hidden'
+            expandStatsRef.current.style.top = `${scrollY}px`
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+
         return () => {
             document.body.style.overflow = 'auto'
         }
-    }, [open,openGraph,openGraphSub,scrollY])
+    }, [open,openGraph,openGraphSub,statsExpand,scrollY])
     const handleScroll = () => {
         setScrollY(window.scrollY)
     }
@@ -259,6 +293,20 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
             document.removeEventListener("mousedown", handleClickOutside)
         }
     }, [openGraphSub])
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (expandStatsRef.current && expandStatsRef.current.contains(event.target)) {
+                if (event.target.classList.contains('loyer_expand')) {
+                    setStatsExpand(!statsExpand)
+                }
+            }
+        }
+      
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [statsExpand])
     const onSetContract = (value) => {
         setContract(value)
         setOpenGraph(!openGraph)
@@ -278,6 +326,10 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
         searchBarRef.current.value = ''
         setSearchLocation('')
     }
+    const onStatsExpand = (value) => {
+        setStatsValue(value)
+        setStatsExpand(true)    
+    }
     return (
         <div className='dashboard'>
             <h1 className='dashboard_title'>Realtools Dashboard</h1>
@@ -292,7 +344,10 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
             </div>
             <div className='dashboard_bloc_stats'>
                 <div className='dashboard_text_stats'>
-                    <h2>Résumé</h2>
+                    <div className='dashboard_text_stats_inline_text'>
+                        <h2>Résumé</h2>
+                        <img src={chart} alt='' className='dashboard_text_stats_img' width={20} onClick={()=>onStatsExpand('resume')} />
+                    </div>
                     <div className='dashboard_text_stats_inline_text'>
                         <p>Valeur nette</p>
                         <p>{summaryStat &&(summaryStat.netValue === 0 ?("-"):(`${formatNumber(summaryStat.netValue,2)} $`))}</p>
@@ -338,7 +393,10 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                     </div>
                 </div>
                 <div className='dashboard_text_stats'>
-                    <h2>Rendement</h2>
+                    <div className='dashboard_text_stats_inline_text'>
+                        <h2>Rendement</h2>
+                        <img src={chart} alt='' className='dashboard_text_stats_img' width={20} onClick={()=>onStatsExpand('rendement')} />
+                    </div>
                     <div className='dashboard_text_stats_inline_text'>
                         <div className='dashboard_text_stats_info_bloc'>
                             <p>Rendement annuel actuel</p>
@@ -374,7 +432,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                             <p>Rendement initial</p>
                             <div className='dashboard_text_stats_info_border'>
                                 <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
-                                <span>Rendement donée par RealT</span>
+                                <span>Rendement donné par RealT</span>
                             </div>
                         </div>
                         <p>{yieldStat &&(yieldStat.yieldInitial === 0 ?("-"):(`${formatNumber(yieldStat.yieldInitial,2)} %`))}</p>
@@ -433,12 +491,16 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
             <div className='dashboard_bloc_stats'>
                 <div className='dashboard_chart'>
                     <h2>Type de propriété</h2>
-                    <PieChart datachart={propertiesType} dataLength={dataLength} />
+                    <div className='dashboard_chart_box'>
+                        <PieChart datachart={propertiesType} dataLength={dataLength} />
+                    </div>
                     <img src={maximize} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand('type')} />
                 </div> 
                 <div className='dashboard_chart'>
                     <h2>Localisation des propriétés</h2>
-                    <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
+                    <div className='dashboard_chart_box'>
+                        <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
+                    </div>
                     <img src={maximize} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand('disversity')} />
                 </div>   
             </div>
@@ -542,7 +604,10 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                     </div>
                 ):
                 (
-                    tableData.length > 0 && <Table columns={columns} tableData1={tableData[index]} key={index} onSetContract={onSetContract} historyData={historyData} />
+                    tableData.length > 0 && 
+                    <div className='mobile_table'>
+                        <Table columns={columns} tableData1={tableData[index]} key={index} onSetContract={onSetContract} historyData={historyData} />
+                    </div>
                 )
             }
             <div className='dashboard_bloc_pagination'>
@@ -584,12 +649,16 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                     {expand === 'type' ?(
                         <div className='dashboard_expand'>
                             <h2>Type de propriété</h2>
+                            <div className='dashboard_expand_box'>
                             <PieChart datachart={propertiesType} dataLength={dataLength} />
+                            </div>
                         </div>
                     ):(
                         <div className='dashboard_expand'>
                             <h2>Localisation des propriétés</h2>
+                            <div className='dashboard_expand_box'>
                             <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
+                            </div>
                         </div>
                     )} 
                     <img src={cross} alt='' onClick={()=>setOpen(!open)} width={20} className='loyer_expand_components_img' />
@@ -612,7 +681,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                 </div>
                             </div>
                             <div className='dashboard_expand_switch'>
-                                <p>Statisique</p>
+                                <p>Statistique</p>
                                 <div className='loyer_bloc_checkbox'>
                                     <p>Personnel</p>
                                     <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
@@ -620,26 +689,54 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                     </div>
                                     <p>Global</p>
                                 </div>
+                                <div className='dashboard_text_stats_info_border'>
+                                    <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                    <span>Personnel: Depuis l'achat du token<br/>Global: Depuis la mise en location</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className='loyer_expand_graph_sub'>
-                        <div className='loyer_expand_graph_components'>
-                            <LineChartToken datachart={stats?tokenAlternate:token}/>
-                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('token')} />
-                        </div>
-                        <div className='loyer_expand_graph_components'>
-                            <LineChartRent datachart={stats?rentAlternate:rent} datatoken={stats?tokenAlternate:value} />
-                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('loyer')} />
-                        </div>
-                        <div className='loyer_expand_graph_components'>
-                            <LineChartYield datachart={stats?yieldDataAlternate:yieldData} datainitial={stats?yieldInitialAlternate:yieldInitial} />
-                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('yield')} />
-                        </div>
-                        <div className='loyer_expand_graph_components'>
-                            <LineChartRoi datachart={stats?roiAlternate:roi} />
-                            <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('roi')} />
-                        </div>
+                        {isMobile ?(
+                            <CarouselGraph 
+                                LineChartToken={LineChartToken} 
+                                LineChartRent={LineChartRent}  
+                                LineChartYield={LineChartYield}
+                                LineChartRoi={LineChartRoi}
+                                stats={stats}
+                                tokenAlternate={tokenAlternate}
+                                token={token}
+                                rentAlternate={rentAlternate}
+                                rent={rent}
+                                yieldDataAlternate={yieldDataAlternate}
+                                yieldData={yieldData}
+                                yieldInitialAlternate={yieldInitialAlternate}
+                                yieldInitial={yieldInitial}
+                                roiAlternate={roiAlternate}
+                                roi={roi}
+                                value={value}
+                            />
+                            ):(
+                                <>
+                                    <div className='loyer_expand_graph_components'>
+                                        <LineChartToken datachart={stats?tokenAlternate:token}/>
+                                        <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('token')} />
+                                    </div>
+                                    <div className='loyer_expand_graph_components'>
+                                        <LineChartRent datachart={stats?rentAlternate:rent} datatoken={stats?tokenAlternate:value} />
+                                        <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('loyer')} />
+                                    </div>
+                                    <div className='loyer_expand_graph_components'>
+                                        <LineChartYield datachart={stats?yieldDataAlternate:yieldData} datainitial={stats?yieldInitialAlternate:yieldInitial} />
+                                        <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('yield')} />
+                                    </div>
+                                    <div className='loyer_expand_graph_components'>
+                                        <LineChartRoi datachart={stats?roiAlternate:roi} />
+                                        <img src={maximize} alt='' width={20} onClick={()=>onSetExpandGraph('roi')} />
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
                     <img src={cross} alt='' onClick={()=>setOpenGraph(!openGraph)} width={20} className='loyer_expand_components_img' />
                 </div>}   
@@ -651,13 +748,17 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                             <div className='dashboard_expand_switch_bloc'>
                                 <h2>Évolution du token</h2>
                                 <div className='dashboard_expand_switch'>
-                                    <p>Statisique</p>
+                                    <p>Statistique</p>
                                     <div className='loyer_bloc_checkbox'>
                                         <p>Personnel</p>
                                         <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
                                             <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
                                         </div>
                                         <p>Global</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_info_border'>
+                                        <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                        <span>Personnel: Depuis l'achat du token<br/>Global: Depuis la mise en location</span>
                                     </div>
                                 </div>
                             </div>
@@ -668,13 +769,17 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                             <div className='dashboard_expand_switch_bloc'>
                                 <h2>Loyer cumulés/Prix d'achat</h2>
                                 <div className='dashboard_expand_switch'>
-                                    <p>Statisique</p>
+                                    <p>Statistique</p>
                                     <div className='loyer_bloc_checkbox'>
                                         <p>Personnel</p>
                                         <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
                                             <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
                                         </div>
                                         <p>Global</p>
+                                    </div>
+                                    <div className='dashboard_text_stats_info_border'>
+                                        <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                        <span>Personnel: Depuis l'achat du token<br/>Global: Depuis la mise en location</span>
                                     </div>
                                 </div>
                             </div>
@@ -685,13 +790,17 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                 <div className='dashboard_expand_switch_bloc'>
                                     <h2>Rendement Actuel/Initial</h2>
                                     <div className='dashboard_expand_switch'>
-                                        <p>Statisique</p>
+                                        <p>Statistique</p>
                                         <div className='loyer_bloc_checkbox'>
                                             <p>Personnel</p>
                                             <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
                                                 <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
                                             </div>
                                             <p>Global</p>
+                                        </div>
+                                        <div className='dashboard_text_stats_info_border'>
+                                            <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                            <span>Personnel: Depuis l'achat du token<br/>Global: Depuis la mise en location</span>
                                         </div>
                                     </div>
                                 </div>
@@ -702,13 +811,17 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                                     <div className='dashboard_expand_switch_bloc'>
                                         <h2>Performance du loyer</h2>
                                         <div className='dashboard_expand_switch'>
-                                            <p>Statisique</p>
+                                            <p>Statistique</p>
                                             <div className='loyer_bloc_checkbox'>
                                                 <p>Personnel</p>
                                                 <div className='loyer_checkbox' onClick={()=>setStats(!stats)}>
                                                     <div className={`loyer_checkbox_components ${stats ?"true":"false"}`}></div>
                                                 </div>
                                                 <p>Global</p>
+                                            </div>
+                                            <div className='dashboard_text_stats_info_border'>
+                                                <img src={info} alt='' className='dashboard_text_stats_info' height={14} width={6} />
+                                                <span>Personnel: Depuis l'achat du token<br/>Global: Depuis la mise en location</span>
                                             </div>
                                         </div>
                                     </div>
@@ -718,6 +831,26 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData}) {
                         )
                     )} 
                     <img src={cross} alt='' onClick={()=>setOpenGraphSub(!openGraphSub)} width={20} className='loyer_expand_components_img' />
+                </div>   
+            </div>
+            <div className={`loyer_expand ${statsExpand ?"open":""}`} ref={expandStatsRef}>
+                <div className='loyer_expand_components'>
+                    {statsValue === 'resume' ?(
+                        <div className='dashboard_expand'>
+                            <h2>Investissement Mensuel</h2>
+                            <div className='dashboard_expand_box'>
+                                <BarInvestissementMensuel datachart={investment} />
+                            </div>
+                        </div>
+                    ):(statsValue === 'rendement' &&
+                        <div className='dashboard_expand'>
+                            <h2>Évolution du rendement</h2>
+                            <div className='dashboard_expand_box'>
+                                <LineEvolutionYield datachart={yieldChart}/>
+                            </div>
+                        </div>
+                    )} 
+                    <img src={cross} alt='' onClick={()=>setStatsExpand(!statsExpand)} width={20} className='loyer_expand_components_img' />
                 </div>   
             </div>
         </div>
