@@ -5,37 +5,55 @@
     overflow: scroll;
 }
 @media screen and (max-width: 768px){
-    .dashboard_bloc_select
+    .dashboard
     {
-        padding: 0 10px;
-        &_component select
+        &_bloc_select
         {
-            font-size: 16px;
+            padding: 0 10px;
+            &_component select
+            {
+                font-size: 16px;
+            }
         }
-    }
-    .dashboard_grid
-    {
-        width: 98vw;
-        max-width: 450px;
-        &_img
+        &_grid
         {
             width: 98vw;
             max-width: 450px;
+            &_img
+            {
+                width: 98vw;
+                max-width: 450px;
+            }
         }
-    }
-    .dashboard_bloc_pagination
-    {
-        margin-bottom: 75px;
-    }
-    .dashboard_settings
-    {
-        display: none;
-    }
-    .dashboard_chart{
-        width: 95vw;
-        &_img
+        &_bloc_pagination
+        {
+            margin-bottom: 75px;
+        }
+        &_settings
         {
             display: none;
+        }
+        &_chart
+        {
+            width: 95vw;
+            &_box
+            {
+                width: 92vw;
+            }
+            &_img
+            {
+                display: none;
+            }
+        }
+        &_expand
+        {
+            width: 95vw;
+            height: 85vh;
+            &_box
+            {
+                width: 95vw;
+                height: 80vh;  
+            }
         }
     }
 }

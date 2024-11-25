@@ -96,6 +96,11 @@
         }
         &_expand
         {
+            &_components
+            {
+                width: 95vw;
+                height: 85vh;
+            }
             &_graph
             {
                 width: 90vw;

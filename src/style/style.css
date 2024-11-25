@@ -1077,7 +1077,7 @@ a {
   color: #fff;
   width: 1600px;
   height: 900px;
-  padding: 10px;
+  padding: 10px 0;
 }
 .loyer_expand_components_img {
   position: absolute;
@@ -1092,7 +1092,7 @@ a {
 }
 .loyer_expand_chart {
   width: 100%;
-  height: 820px;
+  height: 780px;
 }
 .loyer_expand_title {
   width: 98%;
@@ -1169,7 +1169,7 @@ a {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding-right: 35px;
+  padding: 0 35px;
 }
 
 .mobile_main {
@@ -1379,8 +1379,19 @@ a {
   .dashboard_chart {
     width: 95vw;
   }
+  .dashboard_chart_box {
+    width: 92vw;
+  }
   .dashboard_chart_img {
     display: none;
+  }
+  .dashboard_expand {
+    width: 95vw;
+    height: 85vh;
+  }
+  .dashboard_expand_box {
+    width: 95vw;
+    height: 80vh;
   }
 }
 @media screen and (max-width: 768px) {
@@ -1466,6 +1477,10 @@ a {
     border-radius: 5px;
     padding: 5px 5px;
     width: 200px;
+  }
+  .loyer_expand_components {
+    width: 95vw;
+    height: 85vh;
   }
   .loyer_expand_graph {
     width: 90vw;

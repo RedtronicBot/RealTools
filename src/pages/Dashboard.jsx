@@ -222,34 +222,15 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
     }, [open])
     /*Désactivation/activation du scroll si on expand ou non*/
     useEffect(() => {
-        if (open) {
+        if (open||openGraph||openGraphSub||statsExpand) {
             document.body.style.overflow = 'hidden'
             expandRef.current.style.top = `${scrollY}px`
-        } else {
-            document.body.style.overflow = 'auto'
-        }
-        
-        if (openGraph) {
-            document.body.style.overflow = 'hidden'
             expandGraphRef.current.style.top = `${scrollY}px`
-        } else {
-            document.body.style.overflow = 'auto'
-        }
-
-        if (openGraphSub) {
-            document.body.style.overflow = 'hidden'
             expandGraphSubRef.current.style.top = `${scrollY}px`
-        } else {
-            document.body.style.overflow = 'auto'
-        }
-
-        if (statsExpand) {
-            document.body.style.overflow = 'hidden'
             expandStatsRef.current.style.top = `${scrollY}px`
         } else {
             document.body.style.overflow = 'auto'
         }
-
         return () => {
             document.body.style.overflow = 'auto'
         }
@@ -501,7 +482,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
                     <div className='dashboard_chart_box'>
                         <PieChart datachart={propertiesDiversity} dataLength={dataLength} />
                     </div>
-                    <img src={maximize} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand('disversity')} />
+                    <img src={maximize} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand('diversity')} />
                 </div>   
             </div>
             <div className='dashboard_bloc_select'>
@@ -653,7 +634,7 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
                             <PieChart datachart={propertiesType} dataLength={dataLength} />
                             </div>
                         </div>
-                    ):(
+                    ):(expand === 'diversity' &&
                         <div className='dashboard_expand'>
                             <h2>Localisation des propriétés</h2>
                             <div className='dashboard_expand_box'>
@@ -762,7 +743,9 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
                                     </div>
                                 </div>
                             </div>
-                            <LineChartToken datachart={stats?tokenAlternate:token}/>
+                            <div className='dashboard_expand_box'>
+                                <LineChartToken datachart={stats?tokenAlternate:token}/>
+                            </div>
                         </div>
                     ):(expandGraph === 'loyer' ?(
                         <div className='dashboard_expand'>
@@ -783,7 +766,9 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
                                     </div>
                                 </div>
                             </div>
-                            <LineChartRent datachart={stats?rentAlternate:rent} datatoken={stats?tokenAlternate:value} />
+                            <div className='dashboard_expand_box'>
+                                <LineChartRent datachart={stats?rentAlternate:rent} datatoken={stats?tokenAlternate:value} />
+                            </div>
                         </div>
                         ):(expandGraph === 'yield' ?(
                             <div className='dashboard_expand'>
@@ -804,7 +789,9 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
                                         </div>
                                     </div>
                                 </div>
-                                <LineChartYield datachart={stats?yieldDataAlternate:yieldData} datainitial={stats?yieldInitialAlternate:yieldInitial} />
+                                <div className='dashboard_expand_box'>
+                                    <LineChartYield datachart={stats?yieldDataAlternate:yieldData} datainitial={stats?yieldInitialAlternate:yieldInitial} />
+                                </div>
                             </div>
                             ):(
                                 <div className='dashboard_expand'>
@@ -825,7 +812,9 @@ function Dashboard({data,dataRealT,setKey,valueRmm,historyData,apiKey}) {
                                             </div>
                                         </div>
                                     </div>
-                                    <LineChartRoi datachart={stats?roiAlternate:roi} />
+                                    <div className='dashboard_expand_box'>
+                                        <LineChartRoi datachart={stats?roiAlternate:roi} />
+                                    </div>
                                 </div>
                             )    
                         )
