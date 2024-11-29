@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/RealTools/static/css/main.3ccbbf10.css",
-    "main.js": "/RealTools/static/js/main.93b5723b.js",
+    "main.css": "/RealTools/static/css/main.9f797e36.css",
+    "main.js": "/RealTools/static/js/main.97d28fcd.js",
     "static/media/portfolio.png": "/RealTools/static/media/portfolio.2a8bd98da672e58a6e28.png",
     "static/media/quadplex.png": "/RealTools/static/media/quadplex.4fdc211754120020e6a6.png",
     "static/media/gear-solid.svg": "/RealTools/static/media/gear-solid.0d170579c1e397e19e20dcee9db5daec.svg",
@@ -13,6 +13,7 @@
     "static/media/house-solid.svg": "/RealTools/static/media/house-solid.9ae583ec1fd9ce36b21898d6827170a6.svg",
     "static/media/money-bill-wave-solid.svg": "/RealTools/static/media/money-bill-wave-solid.9c1bdc48dad8e22c4b92aaa6ba30192e.svg",
     "index.html": "/RealTools/index.html",
+    "static/media/cart-shopping-solid.svg": "/RealTools/static/media/cart-shopping-solid.f5a1ec3b319d151baa39e7129900507b.svg",
     "static/media/house-user-solid.svg": "/RealTools/static/media/house-user-solid.eca03e83b236110a5523d23d6a94a815.svg",
     "static/media/chart-line-solid.svg": "/RealTools/static/media/chart-line-solid.8375bbdf0db652a364ac49691742c9b2.svg",
     "static/media/x-solid.svg": "/RealTools/static/media/x-solid.6b4cdfe4e04dac9cee7c9eff46b87830.svg",
@@ -21,11 +22,11 @@
     "static/media/filter-solid.svg": "/RealTools/static/media/filter-solid.2a94cd134364999afd5f1507b731f054.svg",
     "static/media/chevron.svg": "/RealTools/static/media/chevron.0cc2834c5b72ead6355dcf336cea13c4.svg",
     "static/media/location-dot-solid.svg": "/RealTools/static/media/location-dot-solid.bc52c126a8a9f8a031f4829b78803a5d.svg",
-    "main.3ccbbf10.css.map": "/RealTools/static/css/main.3ccbbf10.css.map",
-    "main.93b5723b.js.map": "/RealTools/static/js/main.93b5723b.js.map"
+    "main.9f797e36.css.map": "/RealTools/static/css/main.9f797e36.css.map",
+    "main.97d28fcd.js.map": "/RealTools/static/js/main.97d28fcd.js.map"
   },
   "entrypoints": [
-    "static/css/main.3ccbbf10.css",
-    "static/js/main.93b5723b.js"
+    "static/css/main.9f797e36.css",
+    "static/js/main.97d28fcd.js"
   ]
 }
