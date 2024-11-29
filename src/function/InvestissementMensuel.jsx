@@ -26,6 +26,7 @@ function InvestissementMensuel(historyData,data,dataRealT,key) {
                 let investment = 0
                 monthInvestmentData.forEach(element => {
                     const data = dataRealT.find(loc => loc.gnosisContract.toLowerCase() === element.contractAddress.toLowerCase())
+                    
                     const dataHistory = historyData.find(loc => loc.uuid.toLowerCase() === element.contractAddress.toLowerCase())
                     const value = parseInt(element.value) / Number(1000000000000000000n)  
                     if(element.to === key) {

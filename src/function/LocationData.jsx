@@ -15,7 +15,7 @@ function LocationData(historyData,data,dataRealT,contract) {
             const arrayRent = []
             const arrayYield = []
             const arrayValue = []
-            let closestIndex = - 1
+            let closestIndex = 0
             let closestDate = null
             const targetDate = new Date(dataRealtTFilter.timeBought)
             historyState.history.forEach((field,index) => {

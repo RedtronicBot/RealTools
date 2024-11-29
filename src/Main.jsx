@@ -4,12 +4,14 @@ import money from './images/icons/money-bill-wave-solid.svg'
 import chart from './images/icons/chart-line-solid.svg'
 import location_dot from './images/icons/location-dot-solid.svg'
 import gear_icon from './images/icons/gear-solid.svg'
+import shopping from './images/icons/cart-shopping-solid.svg'
 /*Pages*/
 import Map from './pages/Map'
 import Dashboard from './pages/Dashboard'
 import Loyer from './pages/Loyer'
+import HistoriqueVente from './pages/HistoriqueVente'
 function Main() {
-    const {data,dataRealT,load,key,setKey,valueRmm,history,rentData} = Data()
+    const {data,dataRealT,key,setKey,valueRmm,history,rentData,tokenBought} = Data()
     const [openBurger,setOpenBurger] = useState(false)
     const burgerRef = useRef(null)
     const [page,setPage] = useState('Dashboard')
@@ -45,6 +47,10 @@ function Main() {
                         <img src={location_dot} width={32} alt='location_dot' />
                         <p>Carte</p>
                     </div>
+                    {/*<div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
+                        <img src={shopping} width={32} alt='location_dot' />
+                        <p>Vente</p>
+                    </div>*/}
                 </div>
             </div>
             <div className='mobile_main'>
@@ -61,6 +67,10 @@ function Main() {
                         <img src={location_dot} width={20} alt='location_dot' />
                         <p>Carte</p>
                     </div>
+                    {/*<div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
+                        <img src={shopping} width={20} alt='location_dot' />
+                        <p>Vente</p>
+                    </div>*/}
                     <div className='mobile_menu_burger_icons' onClick={()=>setWalletmenu(!walletMenu)}>
                         <img src={gear_icon} width={20} alt='gear_icon' />
                         <p>Token</p>
@@ -74,19 +84,19 @@ function Main() {
                 </div>
             </div>
             {key !== '' ?
-                (dataRealT.length > 0 ?
+                (dataRealT.length > 0?
                 (
                     <>
                         {page === 'Dashboard' && (<Dashboard data={data} dataRealT={dataRealT} setKey={setKey} apiKey={key} valueRmm={valueRmm} historyData={history} />)}
                         {page === 'Maps' && (<Map data={data} dataRealT={dataRealT} apiKey={key} setKey={setKey} />)}
                         {page === 'Loyer' && (<Loyer data={data} dataRealT={dataRealT} setKey={setKey} rentData={rentData} />)}
+                        {page === 'Vente' && (<HistoriqueVente dataRealT={dataRealT} tokenBought={tokenBought} />)}
                     </>
                 ):
                 (
                     <div className='map_chargement'>
                         <h2>Chargement</h2>
                         <div className='map_chargement_spinner'></div>
-                        {data.length === 0 ?(<h3>0 %</h3>):(<h3>{parseInt((load/data.length)*100)} %</h3>)}
                     </div>
                 ))
                 :

@@ -111,7 +111,7 @@ function LocationDataAlternate(historyData,dataRealT,contract) {
                 
             }
             const dateBought = new Date(dataRealtTFilter.timeBought)
-            let closestIndex = - 1
+            let closestIndex = 0
             let closestDate = null
             arrayRoi.forEach((field,index) => {
                 const [day, month, year] = field.date.split('/').map(Number)
@@ -147,7 +147,7 @@ function LocationDataAlternate(historyData,dataRealT,contract) {
                 date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             arrayToken.push(TokenObj)
-            closestIndex = - 1
+            closestIndex = 0
             closestDate = null
             arrayToken.forEach((field,index) => {
                 const [day, month, year] = field.date.split('/').map(Number)
@@ -173,7 +173,7 @@ function LocationDataAlternate(historyData,dataRealT,contract) {
                 date:`${dateObjectRentCopy.getDate().toString().padStart(2,"0")}/${(dateObjectRentCopy.getMonth()+1).toString().padStart(2,"0")}/${dateObjectRentCopy.getFullYear()}`
             }
             arrayYield.push(YieldObj)
-            closestIndex = - 1
+            closestIndex = 0
             closestDate = null
             arrayYield.forEach((field,index) => {
                 const [day, month, year] = field.date.split('/').map(Number)

@@ -74,13 +74,11 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
                         if (field.rentStartDate !== null) 
                         {
                             const rentDate = new Date(field.timeBought)
-                            return dateGraph >= rentDate.getTime()
+                            return dateGraph >= rentDate
                         }
                         return false
                     }).forEach(loc => {
-                        const date = loc.rentStartDate.date
-                        const newDate = date.replace(' ', 'T')
-                        const rentDate = new Date(newDate)
+                        const rentDate = new Date(loc.rentStartDate.date)
                         let rentYear = parseFloat((loc.netRentYearPerToken).toFixed(2)*data.filter((field) => field.token === loc.gnosisContract.toLowerCase())[0]?.value)
                         if(loc.rentalType.trim().toLowerCase() === 'pre_construction' || (dateGraph > rentDate && (loc.rentedUnits !== 0 && loc.rentalType.trim().toLowerCase() !== 'pre_construction')) || loc.productType === "loan_income") {
                             rentLoop += rentYear /52
@@ -90,7 +88,7 @@ function InteretRealAlternateData(dataRealT,data,rentData,investmentWeekReal,mon
                         if (field.rentStartDate !== null) 
                         {
                             const rentDate = new Date(field.timeBought)
-                            return rentDate.getTime() >= dateGraphBefore.getTime() && rentDate.getTime() <= dateGraph.getTime()
+                            return rentDate >= dateGraphBefore && rentDate <= dateGraph
                         }
                         return false
                     }).forEach(loc => {

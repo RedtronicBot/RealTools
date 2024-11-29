@@ -39,7 +39,7 @@ function EvolutionYield(historyData,dataRealT) {
             filteredDataRealT.forEach(field=>{
                 const data = historyData.find(loc => field.gnosisContract.toLowerCase() === loc.uuid.toLowerCase())
                 if(data !== undefined) {
-                    let closestIndex = - 1
+                    let closestIndex = 0
                     let closestDate = null
                     data.history.forEach((field,index) => {
                         const dateFirst = field.date

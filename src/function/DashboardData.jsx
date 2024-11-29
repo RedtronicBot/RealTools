@@ -201,13 +201,14 @@ function DashboardData(data,dataRealT,valueRmm,historyData,rondayProperties) {
             if (field.rentStartDate !== null) {
                 const dateFrist = new Date()
                 const rentDate = new Date(field.rentStartDate.date)
-                return dateFrist >= rentDate.getTime() && dateFrist >= field.timeBought
+                const timeBought = new Date(field.timeBought)
+                return dateFrist >= rentDate.getTime() && dateFrist >= timeBought
             }
             return false
         })
         FilteredData.forEach(loc => {
             var history = historyData.find(obj => obj.uuid.toLowerCase() === loc.gnosisContract.toLowerCase())
-            let closestIndex = - 1
+            let closestIndex = 0
             let closestDate = null
             const today = new Date()
             history.history.forEach((field,index) => {
