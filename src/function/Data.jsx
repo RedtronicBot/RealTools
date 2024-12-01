@@ -26,7 +26,7 @@ function Data() {
 			var array = []
 			var rmm = 0
 			var dataTokenRealT
-			var dataGlobalToken
+			var dataGlobalToken = []
 			var dataRealTHistory
 			var dataTransaction
 			var filteredTokens
@@ -97,23 +97,65 @@ function Data() {
 				array = new_array
 				const responseTokenRealT = await axios.get(`https://api.realt.community/v1/token`, {headers: {'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'}})
 				dataTokenRealT = responseTokenRealT.data
-				/*for (let i = 0; i < array.length; i++) 
+				
+				const responseRealTHistory = await axios.get(`https://api.realt.community/v1/tokenHistory`, {headers: {'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'}})
+				dataRealTHistory = responseRealTHistory.data
+				const responseGnosisTransaction = await axios.get(`https://api.gnosisscan.io/api?module=account&action=txlistinternal&address=${key}&startblock=0&endblock=99999999&sort=asc&apikey=W1G4J7RANJ8IM5NYF31QZW24J149STFCVE`)
+				dataTransaction = responseGnosisTransaction.data.result
+
+				/*Récupération des ventes des tokens*/
+				const arrayTokenBought = []
+				for (let i = 0; i < array.length; i++) 
 				{
+					let value = 0
 					try {
 						const responseGlobalToken = await axios.get(`https://api.gnosisscan.io/api?module=account&action=tokentx&contractaddress=${array[i].token}&startblock=0&endblock=99999999&page=&offset=10&sort=asc&apikey=W1G4J7RANJ8IM5NYF31QZW24J149STFCVE`)
-						dataGlobalToken = responseGlobalToken.data.result
+						value = new Decimal(responseGlobalToken.data.result[0].value).div("1000000000000000000")
 						
+						if(responseGlobalToken.data.result[0].tokenName !== "RealToken RWA Holdings SA, Neuchatel, NE, Suisse") {
+							responseGlobalToken.data.result.forEach(e=>{
+								const eValue = new Decimal(e.value).div("1000000000000000000")
+								if(e.from === responseGlobalToken.data.result[0].to) {
+									
+									value = value.minus(eValue)	
+								}
+							})
+							
+							const lastResult = responseGlobalToken.data.result.findLast(e=> e.from === responseGlobalToken.data.result[0].to)
+							if(lastResult) {
+								const lastDate = new Date(lastResult.timeStamp*1000)
+								const today = new Date()
+								const diffDate = today - lastDate
+								const diffDay = diffDate / (86400*1000)
+								if(diffDay < 7) {
+									if(value > 0 && value.toFixed(2) > 50 && array[i].token !== '0x8be1619aa46bd35a867e290e932fa30160553876') {
+										const arrayValue = []
+
+										responseGlobalToken.data.result.forEach(e=>{
+											if(e.from === responseGlobalToken.data.result[0].to){
+												const eValue = new Decimal(e.value / Number(1000000000000000000n))
+												const TokenBoughtObj = {
+													value:eValue,
+													date:e.timeStamp,
+													tokenContract:e.contractAddress
+												}
+												arrayValue.push(TokenBoughtObj)
+											}
+										})
+										arrayTokenBought.push(arrayValue)
+									}
+								}
+
+							}
+						}
 					} 
 					catch (error)
 					{
 						console.error(error)
 					}
 					await new Promise(resolve => setTimeout(resolve, 200))
-				}*/
-				const responseRealTHistory = await axios.get(`https://api.realt.community/v1/tokenHistory`, {headers: {'X-AUTH-REALT-TOKEN': 'b65e9f9f-preprod-14ae-676b-9256697b1e3e'}})
-				dataRealTHistory = responseRealTHistory.data
-				const responseGnosisTransaction = await axios.get(`https://api.gnosisscan.io/api?module=account&action=txlistinternal&address=${key}&startblock=0&endblock=99999999&sort=asc&apikey=W1G4J7RANJ8IM5NYF31QZW24J149STFCVE`)
-				dataTransaction = responseGnosisTransaction.data.result
+				}
+				dataGlobalToken = arrayTokenBought
 			}
 			catch(err) {
 				console.error(err)
@@ -143,18 +185,18 @@ function Data() {
 				var array
 				var rmm
 				var dataTokenRealT 
-				var dataGlobalToken 
 				var dataRealTHistory 
 				var dataTransaction
+				var dataGlobalToken
 				const storedData = JSON.parse(localStorage.getItem('realt'))
-				if (storedData && new Date().getTime() < storedData.expires) {
+				if (storedData && new Date().getTime() < new Date(storedData.expires)) {
 					filteredTokens = storedData.filteredTokens
 					array = storedData.array
 					rmm = storedData.rmm
 					dataTokenRealT = storedData.dataTokenRealT
-					dataGlobalToken = storedData.dataGlobalToken
 					dataRealTHistory = storedData.dataRealTHistory
 					dataTransaction = storedData.dataTransaction
+					dataGlobalToken = storedData.dataGlobalToken
 				}
 				else {
 					localStorage.removeItem('realt')	
@@ -163,11 +205,12 @@ function Data() {
 					array = array_
 					rmm = rmm_
 					dataTokenRealT = dataTokenRealT_
-					dataGlobalToken = dataGlobalToken_
 					dataRealTHistory = dataRealTHistory_
 					dataTransaction = dataTransaction_
+					dataGlobalToken = dataGlobalToken_
 					const now = new Date()
-					localStorage.setItem('realt', JSON.stringify({filteredTokens:filteredTokens,array:array,rmm:rmm,dataTokenRealT:dataTokenRealT,dataGlobalToken:dataGlobalToken,dataRealTHistory:dataRealTHistory,dataTransaction:dataTransaction,expires:now.setHours(23, 59, 59, 999)}))
+					now.setHours(23, 59, 59, 999)
+					localStorage.setItem('realt', JSON.stringify({filteredTokens:filteredTokens,array:array,rmm:rmm,dataTokenRealT:dataTokenRealT,dataRealTHistory:dataRealTHistory,dataTransaction:dataTransaction,dataGlobalToken:dataGlobalToken,expires:now}))
 				}
 				setValueRmm(rmm)
 				setData(array)
@@ -264,33 +307,7 @@ function Data() {
 					dateRentAfter.setDate(dateRentAfter.getDate() + 7)
 				}
 				setRentData(arrayGraph)
-				/*let value = 0
-				value = new Decimal(response_token.data.result[0].value / Number(1000000000000000000n))
-				response_token.data.result.forEach(e=>{
-					if(e.from === response_token.data.result[0].to){
-						const eValue = new Decimal(e.value / Number(1000000000000000000n))
-						value = value.minus(eValue)
-					}
-				})
-				if(value > 0) {
-					/*console.log(response_token.data.result[0].tokenName)
-					console.log(value)*/
-					/*const arrayValue = []
-					if(response_token.data.result[0].tokenName !== "RealToken RWA Holdings SA, Neuchatel, NE, Suisse") {
-						response_token.data.result.forEach(e=>{
-							if(e.from === response_token.data.result[0].to){
-								const eValue = new Decimal(e.value / Number(1000000000000000000n))
-								const TokenBoughtObj = {
-									value:eValue,
-									date:e.timeStamp,
-									tokenContract:e.contractAddress
-								}
-								arrayValue.push(TokenBoughtObj)
-							}
-						})
-						arrayTokenBought.push(arrayValue)
-					}	
-				}*/
+				setTokenBought(dataGlobalToken)
 			}
 			fetchData()
 		}

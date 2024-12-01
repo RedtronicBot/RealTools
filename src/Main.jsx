@@ -47,10 +47,10 @@ function Main() {
                         <img src={location_dot} width={32} alt='location_dot' />
                         <p>Carte</p>
                     </div>
-                    {/*<div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
+                    <div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
                         <img src={shopping} width={32} alt='location_dot' />
                         <p>Vente</p>
-                    </div>*/}
+                    </div>
                 </div>
             </div>
             <div className='mobile_main'>
@@ -67,10 +67,10 @@ function Main() {
                         <img src={location_dot} width={20} alt='location_dot' />
                         <p>Carte</p>
                     </div>
-                    {/*<div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
+                    <div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
                         <img src={shopping} width={20} alt='location_dot' />
                         <p>Vente</p>
-                    </div>*/}
+                    </div>
                     <div className='mobile_menu_burger_icons' onClick={()=>setWalletmenu(!walletMenu)}>
                         <img src={gear_icon} width={20} alt='gear_icon' />
                         <p>Token</p>

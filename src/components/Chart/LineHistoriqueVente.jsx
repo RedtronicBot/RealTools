@@ -3,16 +3,20 @@ import { Line } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 
 ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Tooltip,Legend)
-
+function formatNumber(number, decimals) 
+{
+    if (Number.isInteger(number)) 
+    {
+        return number
+    } 
+    else 
+    {
+        return parseFloat(number.toFixed(decimals))
+    }
+}
 function LineHistoriqueVente({datachart}){
-    const partialLabels = datachart.map(field => {
-        let annee = field.date.substring(6, 10)
-        let mois = field.date.substring(3, 5)
-
-        return `${mois}/${annee}`
-    })
     const data = {
-        labels: partialLabels, 
+        labels: datachart.map(field => field.date), 
         datasets: [
             {
                 label: 'Tokens restants',
@@ -29,7 +33,7 @@ function LineHistoriqueVente({datachart}){
         ]
     }
 
-  const options = {
+    const options = {
         tension:0.2,
         responsive: true,
         maintainAspectRatio: false,
@@ -44,15 +48,16 @@ function LineHistoriqueVente({datachart}){
                 },
                 label: function (context) {
                     let label = context.dataset.label || ''
-
+    
                     if (label) 
                     {
                         label += ': '
                     }
                     if (context.parsed.y !== null) 
                     {
-                        label += context.parsed.y.toFixed(2)
+                        label += formatNumber(context.parsed.y,2)
                     }
+                    label += ' $'
                     return label
                 },
                 labelColor: function(context) 
@@ -95,19 +100,10 @@ function LineHistoriqueVente({datachart}){
             x: {
                 display: true,
                 grid: {
-                    display: false
+                    display: true,
+                    color: 'rgba(255, 255, 255, 0.5)'
                 },
                 ticks: {
-                    callback: function (value, index, values) 
-                    {
-                        const totalLabels = values.length  
-                        const step = Math.floor(totalLabels / 12) 
-                        if (index % step === 0) 
-                        {
-                            return this.getLabelForValue(value)
-                        }
-                        return ''
-                    },
                     color: 'white'
                 },
                 border: {
@@ -119,23 +115,23 @@ function LineHistoriqueVente({datachart}){
                 position: 'left',
                 title: {
                     display: true,
-                    text: 'Historique des ventes',
+                    text: 'Loyers Cumulée',
                     color: 'white'
                 },
                 grid: {
-                    drawOnChartArea: false
+                    drawOnChartArea: true,
+                    color: 'rgba(255, 255, 255, 0.5)'
                 },
                 ticks: {
                     color:'white',
-                    stepSize: 10,
                     beginAtZero: true
                 },
                 border: {
                     color: 'white'
                 }
             }
+          }
         }
-    }
 
   return <Line data={data} options={options} />
 }

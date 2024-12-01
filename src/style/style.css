@@ -1193,6 +1193,7 @@ a {
   gap: 20px;
 }
 .historique_vente_bloc_location_components {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1212,6 +1213,13 @@ a {
 .historique_vente_bloc_location_components_graph {
   width: 350px;
   height: 177px;
+}
+.historique_vente_bloc_location_components_text {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5px;
 }
 
 .mobile_main {
