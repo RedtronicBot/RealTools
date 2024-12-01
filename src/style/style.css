@@ -1222,6 +1222,11 @@ a {
   padding: 0 5px;
 }
 
+@media screen and (max-width: 768px) {
+  .historique_vente_bloc_location {
+    padding: 0;
+  }
+}
 .mobile_main {
   display: none;
 }
@@ -1246,14 +1251,14 @@ a {
   }
   .mobile_menu_burger {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 900;
     background-color: #2E2E2E;
-    width: 100%;
+    width: 100vw;
   }
   .mobile_menu_burger_icons {
     display: flex;
@@ -1261,7 +1266,7 @@ a {
     align-items: center;
     gap: 10px;
     filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
-    margin: 10px;
+    margin: 10px 0;
     cursor: pointer;
     color: black;
   }

@@ -43,13 +43,13 @@ function Main() {
                         <img src={money} width={32} alt='money' />
                         <p>Loyer</p>
                     </div>
-                    <div className='menu_burger_icons' onClick={()=>onSetPage('Maps')}>
-                        <img src={location_dot} width={32} alt='location_dot' />
-                        <p>Carte</p>
-                    </div>
                     <div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
                         <img src={shopping} width={32} alt='location_dot' />
                         <p>Vente</p>
+                    </div>
+                    <div className='menu_burger_icons' onClick={()=>onSetPage('Maps')}>
+                        <img src={location_dot} width={32} alt='location_dot' />
+                        <p>Carte</p>
                     </div>
                 </div>
             </div>
@@ -57,23 +57,18 @@ function Main() {
                 <div className='mobile_menu_burger'>
                     <div className='mobile_menu_burger_icons' onClick={()=>setPage('Dashboard')}>
                         <img src={chart} width={20} alt='chart' />
-                        <p>Dashboard</p>
                     </div>
                     <div className='mobile_menu_burger_icons' onClick={()=>setPage('Loyer')}>
                         <img src={money} width={20} alt='money' />
-                        <p>Loyer</p>
-                    </div>
-                    <div className='mobile_menu_burger_icons' onClick={()=>setPage('Maps')}>
-                        <img src={location_dot} width={20} alt='location_dot' />
-                        <p>Carte</p>
                     </div>
                     <div className='menu_burger_icons' onClick={()=>onSetPage('Vente')}>
                         <img src={shopping} width={20} alt='location_dot' />
-                        <p>Vente</p>
+                    </div>
+                    <div className='mobile_menu_burger_icons' onClick={()=>setPage('Maps')}>
+                        <img src={location_dot} width={20} alt='location_dot' />
                     </div>
                     <div className='mobile_menu_burger_icons' onClick={()=>setWalletmenu(!walletMenu)}>
                         <img src={gear_icon} width={20} alt='gear_icon' />
-                        <p>Token</p>
                     </div>
                 </div>
                 <div className={`mobile_main_key ${walletMenu ? "open":""}`}>

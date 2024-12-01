@@ -151,7 +151,7 @@ function HistoriqueVente({dataRealT,tokenBought}) {
     }, [open])
     return (
         <div className='historique_vente'>
-            <h1 className='historique_vente_title'>Historique Des Ventes</h1>
+            <h1 className='historique_vente_title'>Ventes En Cours</h1>
             <div className='historique_vente_bloc_location'> 
                 {tokenBoughtData.map((e,index)=>{
                     const data = dataRealT.find(el=>el.gnosisContract.toLowerCase() === e.contract)
@@ -159,7 +159,10 @@ function HistoriqueVente({dataRealT,tokenBought}) {
                     return(
                         <div key={index} className='historique_vente_bloc_location_components'>
                             <img src={data.imageLink[0]} alt='' className='historique_vente_bloc_location_components_img'/>
-                            <h3>{data.shortName}</h3>
+                            <div className='historique_vente_bloc_location_components_text'>
+                                <h3>{data.shortName}</h3>
+                                <img src={chart} alt='' className='dashboard_text_stats_img' width={24} onClick={()=>onSetExpand(index)} />
+                            </div>
                             <div className='historique_vente_bloc_location_components_text'>
                                 <p>Token Restant</p>
                                 <p>{formatNumber(rest,2)}/{data.totalTokens}</p>
@@ -180,7 +183,7 @@ function HistoriqueVente({dataRealT,tokenBought}) {
                                 <p>Vente De la semaine</p>
                                 <p>{tokenBoughtData[index].weekValue}</p>
                             </div>
-                            <img src={chart} alt='' className='dashboard_chart_img' width={24} onClick={()=>onSetExpand(index)} />
+                            
                         </div>
                     )
                 })}
