@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/RealTools/static/css/main.665ff75d.css",
-    "main.js": "/RealTools/static/js/main.24f5703b.js",
+    "main.css": "/RealTools/static/css/main.019f5636.css",
+    "main.js": "/RealTools/static/js/main.0b150b71.js",
     "static/media/portfolio.png": "/RealTools/static/media/portfolio.2a8bd98da672e58a6e28.png",
     "static/media/quadplex.png": "/RealTools/static/media/quadplex.4fdc211754120020e6a6.png",
     "static/media/gear-solid.svg": "/RealTools/static/media/gear-solid.0d170579c1e397e19e20dcee9db5daec.svg",
@@ -10,7 +10,10 @@
     "static/media/arrows-rotate-solid.svg": "/RealTools/static/media/arrows-rotate-solid.33f750b027732a2b50e76ccd5b185986.svg",
     "static/media/store-solid.svg": "/RealTools/static/media/store-solid.cff94bdbdb30003a884f3fc5c3948cf6.svg",
     "static/media/maximize-solid.svg": "/RealTools/static/media/maximize-solid.979cead8b7ea96f8db935b42603ad4ca.svg",
+    "static/media/bell-regular.svg": "/RealTools/static/media/bell-regular.e2dff7e9353ea8cbede67c8f85c48fad.svg",
+    "static/media/building-columns-solid.svg": "/RealTools/static/media/building-columns-solid.a0a2963fd4c245efb2808b4fe0ff2819.svg",
     "static/media/house-solid.svg": "/RealTools/static/media/house-solid.9ae583ec1fd9ce36b21898d6827170a6.svg",
+    "static/media/clock-rotate-left-solid.svg": "/RealTools/static/media/clock-rotate-left-solid.f577a50e7c8eefdfda41df3e41be52ff.svg",
     "static/media/money-bill-wave-solid.svg": "/RealTools/static/media/money-bill-wave-solid.9c1bdc48dad8e22c4b92aaa6ba30192e.svg",
     "index.html": "/RealTools/index.html",
     "static/media/cart-shopping-solid.svg": "/RealTools/static/media/cart-shopping-solid.f5a1ec3b319d151baa39e7129900507b.svg",
@@ -22,11 +25,11 @@
     "static/media/filter-solid.svg": "/RealTools/static/media/filter-solid.2a94cd134364999afd5f1507b731f054.svg",
     "static/media/chevron.svg": "/RealTools/static/media/chevron.0cc2834c5b72ead6355dcf336cea13c4.svg",
     "static/media/location-dot-solid.svg": "/RealTools/static/media/location-dot-solid.bc52c126a8a9f8a031f4829b78803a5d.svg",
-    "main.665ff75d.css.map": "/RealTools/static/css/main.665ff75d.css.map",
-    "main.24f5703b.js.map": "/RealTools/static/js/main.24f5703b.js.map"
+    "main.019f5636.css.map": "/RealTools/static/css/main.019f5636.css.map",
+    "main.0b150b71.js.map": "/RealTools/static/js/main.0b150b71.js.map"
   },
   "entrypoints": [
-    "static/css/main.665ff75d.css",
-    "static/js/main.24f5703b.js"
+    "static/css/main.019f5636.css",
+    "static/js/main.0b150b71.js"
   ]
 }
