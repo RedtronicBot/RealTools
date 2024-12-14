@@ -75,13 +75,16 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;    
         }
+        &_bloc_settings {
+            display: none;
+        }
     }  
     .map_search
     {
         z-index: 20;
         &_search_bar
         {
-            width: 55vw;
+            width: 50vw;
             height: 44px;
             background-color: #2E2E2E;
             border: 2px solid #70757A; 
@@ -124,6 +127,9 @@
         cursor: pointer;
         &_key::after
         {
+            display: none;
+        }
+        &_bloc_key.open{
             display: none;
         }
     }

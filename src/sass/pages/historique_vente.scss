@@ -1,62 +1,63 @@
-.historique_vente
-{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    min-height: 100vh;
-    background-color: #242424;
-    color: #fff;
-    &_title
-    {
-        font-size: 28px;
-        margin: 25px 0 50px 0;
-    }
-    &_bloc_location
-    {
-        display: flex;
-        justify-content: center;
-        padding: 0 50px;
-        flex-wrap: wrap;
-        gap:20px;
-        &_components
-        {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 350px;
-            height: 350px;
-            border-radius: 10px;
-            border: 1px solid #70757a;
-            background-color: #2e2e2e;
-            gap:5px;
-            &_img
-            {
-                width: 350px;
-                height: 150px;
-                object-fit: cover;
-                border-radius: 10px 10px 0 0;
-            }
-            &_graph
-            {
-                width: 350px;
-                height: 177px;    
-            }
-            &_text
-            {
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 5px;
-            }
-        }
-    }
+.historique_vente {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	min-height: 100vh;
+	background-color: #242424;
+	color: #fff;
+	&_title {
+		font-size: 28px;
+		margin: 25px 0 50px 0;
+	}
+	&_bloc_location {
+		display: flex;
+		justify-content: center;
+		padding: 0 50px;
+		flex-wrap: wrap;
+		gap: 20px;
+		&_components {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 350px;
+			height: 350px;
+			border-radius: 10px;
+			border: 1px solid #70757a;
+			background-color: #2e2e2e;
+			gap: 5px;
+			&_img {
+				width: 350px;
+				height: 150px;
+				object-fit: cover;
+				border-radius: 10px 10px 0 0;
+			}
+			&_graph {
+				width: 350px;
+				height: 177px;
+			}
+			&_text {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 5px;
+			}
+		}
+	}
+	&_button {
+		display: flex;
+		background-color: #3a3a3a;
+		border: 1px solid #70757a;
+		border-radius: 10px;
+		padding: 10px 5px;
+		cursor: pointer;
+	}
 }
 
-@media screen and (max-width: 768px){
-    .historique_vente_bloc_location{
-        padding: 0;
-    }
+@media screen and (max-width: 768px) {
+	.historique_vente_bloc_location {
+		padding: 0;
+	}
 }
