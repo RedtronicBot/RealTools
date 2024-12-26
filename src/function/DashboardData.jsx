@@ -84,39 +84,42 @@ function DashboardData(data, dataRealT, valueRmm, historyData, rondayProperties)
 					loc.productType === "loan_income"
 				) {
 					var history = historyData.find((obj) => obj.uuid.toLowerCase() === loc.gnosisContract.toLowerCase())
-					for (var i = history.history.length - 1; i >= 0; i--) {
-						if (history.history[i].values.tokenPrice !== undefined) {
-							PropertiesObj.averageValue += history.history[i].values.tokenPrice
-							break
-						}
-					}
-					for (var j = history.history.length - 1; j >= 0; j--) {
-						if (
-							(history.history[j].values.rentedUnits !== undefined &&
-								history.history[j].values.rentedUnits === loc.totalUnits &&
-								history.history[j].values.netRentYear !== undefined) ||
-							(history.history[j].values.rentedUnits === undefined &&
-								history.history[j].values.netRentYear !== undefined) ||
-							(loc.rentalType === "pre_construction" &&
-								history.history[j].values.netRentYear !== undefined) ||
-							(loc.productType === "loan_income" && history.history[j].values.netRentYear !== undefined)
-						) {
-							if (loc.rentalType === "pre_construction") {
-								YieldObj.yieldFull +=
-									(history.history[0].values.netRentYear /
-										history.history[0].values.totalInvestment) *
-									100
-							} else {
-								YieldObj.yieldFull +=
-									(history.history[j].values.netRentYear /
-										history.history[0].values.totalInvestment) *
-									100
+					if (history !== undefined) {
+						for (var i = history.history.length - 1; i >= 0; i--) {
+							if (history.history[i].values.tokenPrice !== undefined) {
+								PropertiesObj.averageValue += history.history[i].values.tokenPrice
+								break
 							}
-							break
 						}
+						for (var j = history.history.length - 1; j >= 0; j--) {
+							if (
+								(history.history[j].values.rentedUnits !== undefined &&
+									history.history[j].values.rentedUnits === loc.totalUnits &&
+									history.history[j].values.netRentYear !== undefined) ||
+								(history.history[j].values.rentedUnits === undefined &&
+									history.history[j].values.netRentYear !== undefined) ||
+								(loc.rentalType === "pre_construction" &&
+									history.history[j].values.netRentYear !== undefined) ||
+								(loc.productType === "loan_income" &&
+									history.history[j].values.netRentYear !== undefined)
+							) {
+								if (loc.rentalType === "pre_construction") {
+									YieldObj.yieldFull +=
+										(history.history[0].values.netRentYear /
+											history.history[0].values.totalInvestment) *
+										100
+								} else {
+									YieldObj.yieldFull +=
+										(history.history[j].values.netRentYear /
+											history.history[0].values.totalInvestment) *
+										100
+								}
+								break
+							}
+						}
+						YieldObj.yieldInitial +=
+							(history.history[0].values.netRentYear / history.history[0].values.totalInvestment) * 100
 					}
-					YieldObj.yieldInitial +=
-						(history.history[0].values.netRentYear / history.history[0].values.totalInvestment) * 100
 				}
 			})
 		PropertiesObj.averageValue =
