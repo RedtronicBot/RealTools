@@ -94,14 +94,14 @@ function Data() {
 				})
 				const new_array = array.filter((arrays) => arrays.value !== 0)
 				array = new_array
-				const responseTokenRealT = await axios.get(`https://api.realt.community/v1/token`, {
+				const responseTokenRealT = await axios.get(`https://api.realtoken.community/v1/token`, {
 					headers: {
 						"X-AUTH-REALT-TOKEN": "b65e9f9f-preprod-14ae-676b-9256697b1e3e",
 					},
 				})
 				dataTokenRealT = responseTokenRealT.data
 
-				const responseRealTHistory = await axios.get(`https://api.realt.community/v1/tokenHistory`, {
+				const responseRealTHistory = await axios.get(`https://api.realtoken.community/v1/tokenHistory`, {
 					headers: {
 						"X-AUTH-REALT-TOKEN": "b65e9f9f-preprod-14ae-676b-9256697b1e3e",
 					},

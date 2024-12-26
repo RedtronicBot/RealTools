@@ -235,6 +235,10 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 				(field) => field.annualPercentageYield >= minValue / 10 && field.annualPercentageYield <= maxValue / 10
 			)
 		}
+		if (historyPing.length > 0 && openPing) {
+			const uuidSet = new Set(historyPing.map((e) => e.uuid.toLowerCase()))
+			filteredDataRealT = filteredDataRealT.filter((e) => uuidSet.has(e.gnosisContract.toLowerCase()))
+		}
 		if (filteredDataRealT.length > size) {
 			for (let i = 0; i < filteredDataRealT.length; i += size) {
 				result.push(filteredArrayTable.slice(i, i + size))
@@ -246,10 +250,6 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 			result.push(filteredArrayTable)
 			setTableData(result)
 			setSlicedData([filteredDataRealT])
-		}
-		if (historyPing.length > 0) {
-			const uuidSet = new Set(historyPing.map((e) => e.uuid.toLowerCase()))
-			filteredDataRealT = filteredDataRealT.filter((e) => uuidSet.has(e.gnosisContract.toLowerCase()))
 		}
 	}, [
 		data,
@@ -263,6 +263,7 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 		minValue,
 		maxValue,
 		historyPing,
+		openPing,
 	])
 	/*Formatage des nombres à virgules*/
 	function formatNumber(number, decimals) {
@@ -567,11 +568,69 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 		}
 	}, [historyData, dataRealT])
 	function onClickPing() {
-		setHistoryPing([])
-		setOpenPing(!openPing)
-		const arrayHistory = []
+		function findDifferences(arr1, arr2) {
+			const differences = {
+				onlyInArray1: [],
+				differingItems: [],
+			}
+
+			const deepEqual = (obj1, obj2) => {
+				if (obj1 === obj2) return true
+				if (typeof obj1 !== "object" || obj1 === null || typeof obj2 !== "object" || obj2 === null) {
+					return false
+				}
+				const keys1 = Object.keys(obj1)
+				const keys2 = Object.keys(obj2)
+				if (keys1.length !== keys2.length) return false
+				return keys1.every((key) => obj2.hasOwnProperty(key) && deepEqual(obj1[key], obj2[key]))
+			}
+
+			// Find items in arr1 but not in arr2
+			arr1.forEach((item1, index) => {
+				const matchIndex = arr2.findIndex((item2) => deepEqual(item1, item2))
+				if (matchIndex === -1) {
+					differences.onlyInArray1.push(item1)
+				} else if (!deepEqual(item1, arr2[matchIndex])) {
+					differences.differingItems.push({ index: index, item1: item1, item2: arr2[matchIndex] })
+				}
+			})
+
+			return differences
+		}
+
+		function areArraysEqual(arr1, arr2) {
+			if (arr1.length !== arr2.length) {
+				return { equal: false, differences: findDifferences(arr1, arr2) }
+			}
+
+			const differences = findDifferences(arr1, arr2)
+
+			if (differences.onlyInArray1.length === 0 && differences.differingItems.length === 0) {
+				return { equal: true, differences: null }
+			}
+
+			return { equal: false, differences }
+		}
+		const storageData = JSON.parse(localStorage.getItem("history"))
+		const arrayHistoryData = []
+		storageData.history.splice(15, 1)
 		for (var i = 0; i < dataRealT.length; i++) {
 			const loopDataRealT = dataRealT[i]
+			const history = historyData.find((e) => e.uuid.toLowerCase() === loopDataRealT.gnosisContract.toLowerCase())
+			if (history !== undefined) {
+				arrayHistoryData.push(history)
+			}
+		}
+		if (storageData) {
+			const result = areArraysEqual(arrayHistoryData, storageData.history)
+			if (result.equal) {
+				setHistoryPing([])
+			}
+		}
+		setOpenPing(!openPing)
+		const arrayHistory = []
+		for (var j = 0; j < dataRealT.length; j++) {
+			const loopDataRealT = dataRealT[j]
 			const history = historyData.find((e) => e.uuid.toLowerCase() === loopDataRealT.gnosisContract.toLowerCase())
 			if (history !== undefined) {
 				arrayHistory.push(history)
