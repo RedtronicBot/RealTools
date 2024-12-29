@@ -1110,6 +1110,9 @@ a {
   border-radius: 100%;
   padding: 4px;
   aspect-ratio: 1/1;
+  min-width: 10px;
+  height: auto;
+  box-sizing: content-box;
 }
 .dashboard_ping_text p {
   margin: 0;

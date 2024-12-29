@@ -613,7 +613,6 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 		}
 		const storageData = JSON.parse(localStorage.getItem("history"))
 		const arrayHistoryData = []
-		storageData.history.splice(15, 1)
 		for (var i = 0; i < dataRealT.length; i++) {
 			const loopDataRealT = dataRealT[i]
 			const history = historyData.find((e) => e.uuid.toLowerCase() === loopDataRealT.gnosisContract.toLowerCase())
