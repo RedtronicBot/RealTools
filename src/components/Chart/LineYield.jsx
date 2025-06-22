@@ -1,15 +1,6 @@
 import React from "react"
 import { Line } from "react-chartjs-2"
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend,
-} from "chart.js"
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js"
 
 const verticalLinePlugin = {
 	id: "verticalLine",
@@ -106,7 +97,7 @@ function LineChartYield({ datachart, datainitial }) {
 						if (context.parsed.y !== null) {
 							label += context.parsed.y.toFixed(2)
 						}
-						label += " $"
+						label += " %"
 						return label
 					},
 					labelColor: function (context) {

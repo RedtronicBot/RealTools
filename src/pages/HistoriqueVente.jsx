@@ -3,7 +3,8 @@ import LineHistoriqueVente from "../components/Chart/LineHistoriqueVente"
 /*Icones*/
 import cross from "../images/icons/x-solid.svg"
 import gear_icon from "../images/icons/gear-solid.svg"
-function HistoriqueVente({ dataRealT, tokenBought, setKey }) {
+
+function HistoriqueVente({ dataRealT, tokenBought, setKey, data }) {
 	const [tokenBoughtData, setTokenBoughtData] = useState([])
 	const [value, setValue] = useState([])
 	const [open, setOpen] = useState(false)
@@ -11,6 +12,7 @@ function HistoriqueVente({ dataRealT, tokenBought, setKey }) {
 	const [scrollY, setScrollY] = useState(0)
 	const expandRef = useRef(null)
 	const [walletMenu, setWalletmenu] = useState(false)
+
 	function formatNumber(number, decimals) {
 		if (Number.isInteger(number)) {
 			return number
@@ -162,6 +164,7 @@ function HistoriqueVente({ dataRealT, tokenBought, setKey }) {
 			document.removeEventListener("mousedown", handleClickOutside)
 		}
 	}, [open])
+
 	return tokenBought.length > 0 ? (
 		<div className="historique_vente">
 			<h1 className="historique_vente_title">Ventes En Cours</h1>

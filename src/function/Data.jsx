@@ -34,6 +34,7 @@ function Data() {
 				const responseGnosisPersonnalToken = await axios.get(
 					`https://api.gnosisscan.io/api?module=account&action=tokentx&address=${key}&startblock=0&endblock=99999999&sort=asc&apikey=W1G4J7RANJ8IM5NYF31QZW24J149STFCVE`
 				)
+
 				filteredTokens = responseGnosisPersonnalToken.data.result
 				filteredTokens.forEach((token) => {
 					let tokenValue = Number(token.value) / Number(1000000000000000000n)
@@ -42,10 +43,7 @@ function Data() {
 					}
 					tokenValue = parseFloat(tokenValue.toFixed(4))
 					/*Filtrage et ajout des données */
-					if (
-						token.tokenName.toLowerCase().startsWith("realtoken") &&
-						token.tokenName !== "RealToken Ecosystem Governance"
-					) {
+					if (token.tokenName.toLowerCase().startsWith("realtoken") && token.tokenName !== "RealToken Ecosystem Governance") {
 						if (array.length > 0) {
 							const index = array.findIndex((arrays) => token.contractAddress === arrays.token)
 							if (index !== -1) {
@@ -99,6 +97,7 @@ function Data() {
 						"X-AUTH-REALT-TOKEN": "b65e9f9f-preprod-14ae-676b-9256697b1e3e",
 					},
 				})
+
 				dataTokenRealT = responseTokenRealT.data
 
 				const responseRealTHistory = await axios.get(`https://api.realtoken.community/v1/tokenHistory`, {
@@ -106,6 +105,7 @@ function Data() {
 						"X-AUTH-REALT-TOKEN": "b65e9f9f-preprod-14ae-676b-9256697b1e3e",
 					},
 				})
+
 				const arrayTokenBought = []
 				for (let i = 0; i < array.length; i++) {
 					let value = 0
@@ -117,10 +117,7 @@ function Data() {
 						)
 						value = new Decimal(responseGlobalToken.data.result[0].value).div("1000000000000000000")
 
-						if (
-							responseGlobalToken.data.result[0].tokenName !==
-							"RealToken RWA Holdings SA, Neuchatel, NE, Suisse"
-						) {
+						if (responseGlobalToken.data.result[0].tokenName !== "RealToken RWA Holdings SA, Neuchatel, NE, Suisse") {
 							responseGlobalToken.data.result.forEach((e) => {
 								const eValue = new Decimal(e.value).div("1000000000000000000")
 								if (e.from === responseGlobalToken.data.result[0].to) {
@@ -128,20 +125,14 @@ function Data() {
 								}
 							})
 
-							const lastResult = responseGlobalToken.data.result.findLast(
-								(e) => e.from === responseGlobalToken.data.result[0].to
-							)
+							const lastResult = responseGlobalToken.data.result.findLast((e) => e.from === responseGlobalToken.data.result[0].to)
 							if (lastResult) {
 								const lastDate = new Date(lastResult.timeStamp * 1000)
 								const today = new Date()
 								const diffDate = today - lastDate
 								const diffDay = diffDate / (86400 * 1000)
 								if (diffDay < 7) {
-									if (
-										value > 0 &&
-										value.toFixed(2) > 50 &&
-										array[i].token !== "0x8be1619aa46bd35a867e290e932fa30160553876"
-									) {
+									if (value > 0 && value.toFixed(2) > 50 && array[i].token !== "0x8be1619aa46bd35a867e290e932fa30160553876") {
 										const arrayValue = []
 
 										responseGlobalToken.data.result.forEach((e) => {
@@ -270,9 +261,7 @@ function Data() {
 				var array_realT = []
 				for (let i = 0; i < array.length; i++) {
 					const currentItem = array[i]
-					const dataTokenRealT_ = dataTokenRealT.find(
-						(e) => e.gnosisContract && e.gnosisContract.toLowerCase() === currentItem.token.toLowerCase()
-					)
+					const dataTokenRealT_ = dataTokenRealT.find((e) => e.gnosisContract && e.gnosisContract.toLowerCase() === currentItem.token.toLowerCase())
 					if (dataTokenRealT_ !== undefined) {
 						dataTokenRealT_.timeBought = array[i].time
 						array_realT.push(dataTokenRealT_)
@@ -297,10 +286,7 @@ function Data() {
 				var dateRentAfter
 				var dateWeekBefore
 				for (let j = 0; j < filteredTokens.length; j++) {
-					if (
-						filteredTokens[j].tokenName.toLowerCase().startsWith("realtoken") &&
-						filteredTokens[j].value < Number(1000000000000000000n)
-					) {
+					if (filteredTokens[j].tokenName.toLowerCase().startsWith("realtoken") && filteredTokens[j].value < Number(1000000000000000000n)) {
 						dateRent = new Date(parseInt(filteredTokens[j].timeStamp) * 1000)
 						dateRent.setHours(0, 0, 0, 0)
 						dateRentBefore = new Date(dateRent)
@@ -341,16 +327,10 @@ function Data() {
 					let rentPrice = 0
 					if (rentToken.length > 0) {
 						rentToken.forEach((tokens) => {
-							const data = array_realT.find(
-								(loc) => loc.gnosisContract.toLowerCase() === tokens.contractAddress.toLowerCase()
-							)
+							const data = array_realT.find((loc) => loc.gnosisContract.toLowerCase() === tokens.contractAddress.toLowerCase())
 							const value = parseInt(tokens.value) / Number(1000000000000000000n)
 							if (tokens.tokenName !== "RealToken RWA Holdings SA, Neuchatel, NE, Suisse") {
-								if (
-									!Number.isInteger(value) &&
-									tokens.contractAddress !== "0x108f15a6cac5bddf919af07928faa0b7168feff8" &&
-									data !== undefined
-								) {
+								if (!Number.isInteger(value) && tokens.contractAddress !== "0x108f15a6cac5bddf919af07928faa0b7168feff8" && data !== undefined) {
 									rentPrice += parseFloat(data.tokenPrice) * value
 								}
 							}

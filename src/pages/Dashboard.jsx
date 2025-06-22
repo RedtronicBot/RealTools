@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react"
+import React, { useRef, useEffect, useState, useMemo } from "react"
 /*Fonctions*/
 import PieChart from "../components/Chart/Pie"
 import Table from "../components/Table/Table"
@@ -14,6 +14,8 @@ import InvestissementMensuel from "../function/InvestissementMensuel"
 import BarInvestissementMensuel from "../components/Chart/BarInvestissementMensuel"
 import EvolutionYield from "../function/EvolutionYield"
 import LineEvolutionYield from "../components/Chart/LineEvolutionYield"
+import BarProprieteTokenAchetee from "../components/Chart/BarProprieteTokenAchetee"
+import NombreTokenAchetee from "../function/NombreTokenAchetee"
 /*Icones*/
 import info from "../images/icons/info-solid.svg"
 import chevron from "../images/icons/chevron.svg"
@@ -96,6 +98,13 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 	const [openHistory, setOpenHistory] = useState(false)
 	const [historyPing, setHistoryPing] = useState([])
 	const [openPing, setOpenPing] = useState(false)
+	const [indexTokenAchetee, setIndexTokenAchetee] = useState(0)
+	const [listTokenAcheteeYear, setListTokenAcheteeYear] = useState([])
+	const { groupedByYear, valueLastMonth, tokenValueLastMonth } = useMemo(() => {
+		return NombreTokenAchetee(data, dataRealT, historyData)
+	}, [data, dataRealT, historyData])
+	const [openPropertyBought, setOpenPropertyBought] = useState(false)
+	const expandPropertyBoughtRef = useRef(null)
 	useEffect(() => {
 		/*Filtrage des donées pour les graphiques*/
 		let arrayPropertiesType = []
@@ -395,6 +404,20 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 			document.removeEventListener("mousedown", handleClickOutside)
 		}
 	}, [statsExpand])
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (expandHistoryRef.current && expandHistoryRef.current.contains(event.target)) {
+				if (event.target.classList.contains("loyer_expand")) {
+					setOpenHistory(!openHistory)
+				}
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside)
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside)
+		}
+	}, [openHistory])
 	const onSetContract = (value) => {
 		setContract(value)
 		setOpenGraph(!openGraph)
@@ -642,6 +665,32 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 			})
 		)
 	}
+	useEffect(() => {
+		const years = Object.keys(groupedByYear || {})
+		setListTokenAcheteeYear(years)
+	}, [groupedByYear])
+	const prevContentTokenAchetee = () => {
+		const newIndex = indexTokenAchetee === 0 ? listTokenAcheteeYear.length - 1 : indexTokenAchetee - 1
+		setIndexTokenAchetee(newIndex)
+	}
+	const afterContentTokenAchetee = () => {
+		const newIndex = indexTokenAchetee === listTokenAcheteeYear.length - 1 ? 0 : indexTokenAchetee + 1
+		setIndexTokenAchetee(newIndex)
+	}
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (expandPropertyBoughtRef.current && expandPropertyBoughtRef.current.contains(event.target)) {
+				if (event.target.classList.contains("loyer_expand")) {
+					setOpenPropertyBought(!openPropertyBought)
+				}
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside)
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside)
+		}
+	}, [openPropertyBought])
 	return (
 		<div className="dashboard">
 			<h1 className="dashboard_title">Realtools Dashboard</h1>
@@ -697,7 +746,16 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 					</div>
 				</div>
 				<div className="dashboard_text_stats">
-					<h2>Propriétés</h2>
+					<div className="dashboard_text_stats_inline_text">
+						<h2>Propriétés</h2>
+						<img
+							src={chart}
+							alt=""
+							className="dashboard_text_stats_img"
+							width={20}
+							onClick={() => setOpenPropertyBought(!openPropertyBought)}
+						/>
+					</div>
 					<div className="dashboard_text_stats_inline_text">
 						<p>Tokens</p>
 						<p>
@@ -1860,6 +1918,48 @@ function Dashboard({ data, dataRealT, setKey, valueRmm, historyData, apiKey }) {
 						width={20}
 						className="loyer_expand_components_img"
 					/>
+				</div>
+			</div>
+			<div className={`loyer_expand ${openPropertyBought ? "open" : ""}`} ref={expandPropertyBoughtRef}>
+				<div className="loyer_expand_components">
+					<div className="dashboard_expand">
+						<p>Propriétés vendues par Realt/Propriétés achetées</p>
+						<div className="historique_vente_time_carousel">
+							<div className="historique_vente_time_carousel_button">
+								<img
+									src={chevron}
+									alt="chevron"
+									height={20}
+									onClick={() => prevContentTokenAchetee()}
+								/>
+							</div>
+							<p className="historique_vente_time_carousel_title">
+								{listTokenAcheteeYear[indexTokenAchetee]}
+							</p>
+							<div className="historique_vente_time_carousel_button">
+								<img
+									src={chevron}
+									alt="chevron"
+									height={20}
+									onClick={() => afterContentTokenAchetee()}
+								/>
+							</div>
+						</div>
+						<img
+							src={cross}
+							alt=""
+							onClick={() => setOpenPropertyBought(!openPropertyBought)}
+							width={20}
+							className="loyer_expand_components_img"
+						/>
+						<div className="historique_vente_graph">
+							{groupedByYear[listTokenAcheteeYear[indexTokenAchetee]] !== undefined && (
+								<BarProprieteTokenAchetee
+									datachart={groupedByYear[listTokenAcheteeYear[indexTokenAchetee]]}
+								/>
+							)}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

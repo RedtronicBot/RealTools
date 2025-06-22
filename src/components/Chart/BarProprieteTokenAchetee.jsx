@@ -4,16 +4,27 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 
 // Configuration de Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
-
-function BarInvestissementMensuel({ datachart }) {
+function BarProprieteTokenAchetee({ datachart }) {
 	const data = {
-		labels: datachart.map((field) => field.date),
+		labels: datachart.map((field) => {
+			const date = new Date(field.date)
+			const month = String(date.getMonth() + 1).padStart(2, "0") // Mois (01 à 12)
+			const year = date.getFullYear() // Année
+			return `${month}/${year}`
+		}),
 		datasets: [
 			{
-				label: "",
-				data: datachart.map((field) => field.invest),
+				label: "Propriétés Vendu par RealT",
+				data: datachart.map((field) => field.value),
 				backgroundColor: "rgba(75, 192, 192, 1)",
 				borderColor: "rgba(75, 192, 192, 1)",
+				borderWidth: 1,
+			},
+			{
+				label: "Propriétés achetées",
+				data: datachart.map((field) => field.amount),
+				backgroundColor: "rgba(153, 102, 255, 1)",
+				borderColor: "rgba(153, 102, 255, 1))",
 				borderWidth: 1,
 			},
 		],
@@ -28,8 +39,11 @@ function BarInvestissementMensuel({ datachart }) {
 		},
 		plugins: {
 			legend: {
-				position: "top",
-				display: false,
+				position: "bottom",
+				display: true,
+				labels: {
+					color: "#FFFFFF",
+				},
 			},
 			title: {
 				display: false,
@@ -43,7 +57,7 @@ function BarInvestissementMensuel({ datachart }) {
 					size: 14,
 					weight: "bold",
 				},
-				formatter: (value) => `${value} €`,
+				formatter: (value) => `${value}`,
 			},
 		},
 		scales: {
@@ -69,4 +83,4 @@ function BarInvestissementMensuel({ datachart }) {
 	return <Bar data={data} options={options} />
 }
 
-export default BarInvestissementMensuel
+export default BarProprieteTokenAchetee

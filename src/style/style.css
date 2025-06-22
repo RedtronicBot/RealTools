@@ -1392,6 +1392,7 @@ a {
   justify-content: center;
   padding: 0 50px;
   flex-wrap: wrap;
+  margin: 20px 0 0 0;
   gap: 20px;
 }
 .historique_vente_bloc_location_components {
@@ -1430,6 +1431,37 @@ a {
   border-radius: 10px;
   padding: 10px 5px;
   cursor: pointer;
+}
+.historique_vente_time_carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.historique_vente_time_carousel_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background-color: #3a3a3a;
+  border: 1px solid #70757a;
+  padding: 5px 7px;
+  cursor: pointer;
+}
+.historique_vente_time_carousel_button img {
+  filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(143deg) brightness(103%) contrast(101%);
+}
+.historique_vente_time_carousel_button:nth-child(1) img {
+  transform: rotate(180deg);
+}
+.historique_vente_time_carousel_title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.historique_vente_graph {
+  margin-top: 20px;
+  width: 100%;
+  height: 800px;
 }
 
 @media screen and (max-width: 768px) {
